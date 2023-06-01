@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./docker/nginx/prod/:/etc/nginx/conf.d/:ro
+      - ./docker/certbot/conf/:/etc/nginx/ssl:ro
+      - ./docker/certbot/www/:/var/www/certbot/:ro
+      - static:/var/www/static:ro
+      - media:/var/www/media:ro
+    networks:
+      - webnet
+      - webcert
+    depends_on:
+      - web
+
+  certbot:
+    image: certbot/certbot:latest
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    volumes:
+      - ./docker/certbot/www/:/var/www/certbot/:rw
+      - ./docker/certbot/conf/:/etc/letsencrypt/:rw
+    networks:
+      - webcert
+
+  web:
+    <<: &web
+      image: project:prod
+      build:
+        target: production
+      command: bash ./docker/django/gunicorn/start.sh
+      volumes:
+        - static:/var/www/static:rw
+        - media:/var/www/media:rw
+        - .:/app:rw
+      environment:
+        - DJANGO_ENV=production
+        - STAGING=0
+      env_file:
+        - ./config/.env
+      networks:
+        - webnet
+
+volumes:
+  static:
+  media:
+
+networks:
+  webnet:
+  webcert:

@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv
+env/
+venv/
+ENV/
+
+# VS Code
+.vscode
+
+# SQLite database
+*.sqlite3
+*.sqlite3-journal
+
+# Environment variables
+.env
+
+# StaticFiles
+staticfiles/
+
+# Media
+**/media/**
+!**/media/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Caches
+.pytest_cache/
+mypy_cache/
