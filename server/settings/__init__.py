@@ -20,6 +20,7 @@ base_settings = (
     "components/caches.py",  # Cache settings
     "components/healthcheck.py",  # Health check settings
     "components/logging.py",  # Logging settings
+    "components/restframework.py",  # Django REST framework settings
     # Select the right env:
     f"environments/{ENV}.py",
 )

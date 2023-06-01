@@ -16,6 +16,7 @@ django-split-settings = "^1.2.0"
 psycopg2 = "^2.9.6"
 python-decouple = "^3.8"
 gunicorn = "^20.1.0"
+djangorestframework = "^3.14.0"
 
 
 [tool.poetry.group.dev.dependencies]
