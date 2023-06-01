@@ -9,4 +9,5 @@ from server.settings.components.common import INSTALLED_APPS
 
 INSTALLED_APPS += [
     "rest_framework",
+    "drf_yasg"
 ]
