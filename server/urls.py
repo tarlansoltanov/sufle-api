@@ -18,14 +18,27 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 
+
 urlpatterns = [
     path("admin/", admin.site.urls),
 ]
+
+
+# Project App URLs
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+
+urlpatterns += [
+    path("api/", include(router.urls)),
+]
+
 
 # Health check
 urlpatterns += [
     path("health/", include("health_check.urls")),
 ]
+
 
 # Django Debug Toolbar
 if settings.DEBUG:
