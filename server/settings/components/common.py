@@ -15,6 +15,10 @@ from server.settings.components import BASE_DIR
 # Application definition
 
 INSTALLED_APPS = [
+    # Project Apps
+    "server.apps.category",
+
+    # Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
