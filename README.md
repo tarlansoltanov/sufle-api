@@ -1,1 +1,1 @@
-# Base Django Project Template
+# API for Sufle Project
