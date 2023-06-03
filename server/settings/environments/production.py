@@ -36,13 +36,13 @@ _COLLECTSTATIC_DRYRUN = config(
 )
 
 # Adding STATIC_ROOT to collect static files via 'collectstatic':
-STATIC_ROOT = ".static" if _COLLECTSTATIC_DRYRUN else "/var/www/django/static"
+STATIC_ROOT = ".static" if _COLLECTSTATIC_DRYRUN else "/var/www/static"
 
 
 # Media files
 # https://docs.djangoproject.com/en/4.2/topics/files/
 
-MEDIA_ROOT = "/var/www/django/media"
+MEDIA_ROOT = "/var/www/media"
 
 if not config("STAGING", cast=bool, default=False):
     # Security
