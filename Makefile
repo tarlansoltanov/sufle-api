@@ -63,5 +63,39 @@ else
 endif
 
 get-cert:
-	@echo "Testing certificate"
+	@echo "Getting SSL certificate"
 	docker compose --env-file config/.env -f docker/docker-compose.cert.yml up
+
+# Django commands
+
+createsuperuser:
+	@echo "Django: Create Super User"
+ifeq ("$(ENV)", "dev")
+	docker compose exec web python manage.py createsuperuser
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml exec web python manage.py createsuperuser
+endif
+
+makemigrations:
+	@echo "Django: Make Migrations"
+ifeq ("$(ENV)", "dev")
+	docker compose exec web python manage.py makemigrations
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml exec web python manage.py makemigrations
+endif
+
+migrate:
+	@echo "Django: Migrate"
+ifeq ("$(ENV)", "dev")
+	docker compose exec web python manage.py migrate
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml exec web python manage.py migrate
+endif
+
+shell:
+	@echo "Django: Shell"
+ifeq ("$(ENV)", "dev")
+	docker compose exec web python manage.py shell
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml exec web python manage.py shell
+endif
