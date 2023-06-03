@@ -26,8 +26,10 @@ urlpatterns = [
 
 # Project App URLs
 from rest_framework import routers
+from server.apps.category.views import CategoryViewSet
 
 router = routers.DefaultRouter()
+router.register(r"category", CategoryViewSet, basename="category")
 
 urlpatterns += [
     path("api/", include(router.urls)),
