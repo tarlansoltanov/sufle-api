@@ -33,6 +33,7 @@ router.register(r"category", CategoryViewSet, basename="category")
 
 urlpatterns += [
     path("api/", include(router.urls)),
+    path("api/auth/", include("server.apps.user.urls")),
 ]
 
 
