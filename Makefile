@@ -64,4 +64,4 @@ endif
 
 get-cert:
 	@echo "Testing certificate"
-	docker compose --env-file config/.env -f docker-compose.cert.yml up
+	docker compose --env-file config/.env -f docker/docker-compose.cert.yml up
