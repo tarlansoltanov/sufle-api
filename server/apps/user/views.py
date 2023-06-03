@@ -5,35 +5,70 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
 from .models import User
 
 
 class LoginView(APIView):
-    
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "email_phone": openapi.Schema(type=openapi.TYPE_STRING),
+                "password": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        ),
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "refresh": openapi.Schema(type=openapi.TYPE_STRING),
+                    "access": openapi.Schema(type=openapi.TYPE_STRING),
+                },
+            ),
+            400: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="Credentials missing"
+                    ),
+                },
+            ),
+            401: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="Invalid Credentials"
+                    ),
+                },
+            ),
+        },
+    )
     def post(self, request):
-        email_phone = request.data.get('email_phone')
-        password = request.data.get('password')
+        email_phone = request.data.get("email_phone")
+        password = request.data.get("password")
 
         if email_phone is None or password is None:
-            return Response({'msg': 'Credentials missing'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        if '@' in email_phone:
-            email = User.objects.filter(email=email_phone).first().email  
+            return Response("Credentials missing", status=status.HTTP_400_BAD_REQUEST)
+
+        if "@" in email_phone:
+            email = User.objects.filter(email=email_phone).first().email
         else:
             email = User.objects.filter(phone=email_phone).first().email
-        
+
         user = authenticate(request, email=email, password=password)
-        
+
         if user is not None:
             login(request, user)
             refresh = RefreshToken.for_user(user)
 
             response = {
-                'msg': 'Login Success',
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
             }
 
             return Response(response, status=status.HTTP_200_OK)
-        
-        return Response({'msg': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        return Response("Invalid Credentials", status=status.HTTP_401_UNAUTHORIZED)
