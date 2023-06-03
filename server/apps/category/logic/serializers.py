@@ -12,15 +12,22 @@ class CategoryReadSerializer(serializers.ModelSerializer):
         """Meta definition for CategorySerializer."""
 
         model = Category
-        fields = '__all__'
+        fields = ('id', 'name', 'logo', 'main_category', 'sub_categories', 'created_at')
 
+
+    def __init__(self, *args, **kwargs):
+        if main := kwargs.pop('main', None):
+            self.fields.pop('logo')
+            self.fields.pop('main_category')
+            self.fields.pop('sub_categories')
+        super(CategoryReadSerializer, self).__init__(*args, **kwargs)
 
     def get_main_category(self, obj):
         if obj.main_category:
-            return {'id': obj.main_category.id, 'name': obj.main_category.name}
+            return CategoryReadSerializer(obj.main_category, main=True).data
         return None
     
     def get_sub_categories(self, obj):
         if obj.main_category is None:
-            return CategoryReadSerializer(obj.sub_categories.all(), many=True).data
+            return CategoryReadSerializer(obj.sub_categories.all(), many=True, main=True).data
         return None
