@@ -1,11 +1,12 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class Category(models.Model):
     """Model definition for Category."""
 
     name = models.CharField(max_length=255)
-    logo = models.FileField(upload_to='category/')
+    logo = models.FileField(upload_to='category/', blank=True, null=True)
     main_category = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
@@ -24,3 +25,7 @@ class Category(models.Model):
     def __str__(self):
         """Unicode representation of Category."""
         return self.name
+    
+    def clean(self):
+        if self.main_category is None and not bool(self.logo):
+            raise ValidationError('You can not create main category without logo')
