@@ -27,9 +27,11 @@ urlpatterns = [
 # Project App URLs
 from rest_framework import routers
 from server.apps.category.views import CategoryViewSet
+from server.apps.product.views import ProductViewSet
 
 router = routers.DefaultRouter()
 router.register(r"category", CategoryViewSet, basename="category")
+router.register(r"product", ProductViewSet, basename="product")
 
 urlpatterns += [
     path("api/", include(router.urls)),
@@ -43,17 +45,23 @@ from drf_yasg.views import get_schema_view
 
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Sufle API",
-      default_version='v1',
-      description="API for Sufle Project",
-   ),
-   public=True,
+    openapi.Info(
+        title="Sufle API",
+        default_version="v1",
+        description="API for Sufle Project",
+    ),
+    public=True,
 )
 
 urlpatterns += [
-    path("api/redoc", schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path("api/swagger", schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger')
+    path(
+        "api/redoc", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+    ),
+    path(
+        "api/swagger",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger",
+    ),
 ]
 
 
