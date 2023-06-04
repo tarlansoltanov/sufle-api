@@ -14,6 +14,30 @@ else
 	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml up -d
 endif
 
+up-build:
+	@echo "Building images and Running containers"
+ifeq ("$(ENV)", "dev")
+	docker compose up -d --build
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml up -d --build
+endif
+
+up-wd:
+	@echo "Running containers without daemon"
+ifeq ("$(ENV)", "dev")
+	docker compose up
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml up
+endif
+
+up-wd-build:
+	@echo "Building images and Running containers without daemon"
+ifeq ("$(ENV)", "dev")
+	docker compose up --build
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml up --build
+endif
+
 down:
 	@echo "Stopping and Deleting containers"
 ifeq ("$(ENV)", "dev")
