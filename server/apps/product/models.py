@@ -5,9 +5,12 @@ class Product(models.Model):
     """Model definition for Product."""
 
     name = models.CharField(max_length=255)
-    category = models.ForeignKey("category.Category", on_delete=models.CASCADE, related_name="products")
+    category = models.ForeignKey(
+        "category.Category", on_delete=models.CASCADE, related_name="products"
+    )
     ingredients = models.TextField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
+    is_new = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
