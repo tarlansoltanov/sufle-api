@@ -18,7 +18,7 @@ INSTALLED_APPS = [
     # Project Apps
     "server.apps.user",
     "server.apps.category",
-
+    "server.apps.product",
     # Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
