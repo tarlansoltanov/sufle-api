@@ -18,3 +18,10 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         context = super(ProductViewSet, self).get_serializer_context()
         context.update({"request": self.request})
         return context
+
+    @action(detail=False, methods=["GET"])
+    def new(self, request):
+        """Get new products."""
+        products = self.queryset.filter(is_new=True)
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
