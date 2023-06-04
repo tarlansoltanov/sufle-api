@@ -9,6 +9,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 from .models import User
+from .logic.serializers import RegistrationSerializer
 
 
 class LoginView(APIView):
@@ -72,3 +73,39 @@ class LoginView(APIView):
             return Response(response, status=status.HTTP_200_OK)
 
         return Response("Invalid Credentials", status=status.HTTP_401_UNAUTHORIZED)
+
+
+class RegistrationView(APIView):
+    @swagger_auto_schema(
+        request_body=RegistrationSerializer,
+        responses={
+            201: RegistrationSerializer,
+            400: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="Invalid Credentials"
+                    ),
+                    "errors": openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            "field": openapi.Schema(
+                                type=openapi.TYPE_ARRAY,
+                                items=openapi.Schema(type=openapi.TYPE_STRING),
+                            ),
+                        },
+                    ),
+                },
+            ),
+        },
+    )
+    def post(self, request):
+        serializer = RegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(
+            {"message": "Invalid Credentials", "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
