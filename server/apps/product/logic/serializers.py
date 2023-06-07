@@ -38,6 +38,7 @@ class ProductReadSerializer(serializers.ModelSerializer):
             "images",
             "ingredients",
             "price",
+            "discount",
             "is_new",
             "created_at",
         )
