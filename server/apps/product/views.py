@@ -1,6 +1,9 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework import filters
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from server.apps.core.pagination import CustomPagination
 
@@ -16,6 +19,15 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     )
     permission_classes = [permissions.AllowAny]
     pagination_class = CustomPagination
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    filterset_fields = ["category", "is_new"]
+    search_fields = ["name", "category__name"]
+    ordering_fields = ["price", "created_at"]
 
     def get_serializer_context(self):
         context = super(ProductViewSet, self).get_serializer_context()
