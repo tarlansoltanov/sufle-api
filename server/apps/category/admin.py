@@ -1,4 +1,3 @@
-from django import forms
 from django.contrib import admin
 
 from server.apps.category.models import Category

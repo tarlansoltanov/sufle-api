@@ -7,20 +7,25 @@ from .logic.managers import CustomUserManager
 
 class User(AbstractUser):
     """Custom user model."""
-    username = None
-    email = models.EmailField(_("email"), max_length=254, unique=True, null=False, blank=False)
 
-    phone = models.CharField(_("phone"), max_length=20, unique=True, null=False, blank=False)
+    username = None
+    email = models.EmailField(
+        _("email"), max_length=254, unique=True, null=False, blank=False
+    )
+
+    phone = models.CharField(
+        _("phone"), max_length=20, unique=True, null=False, blank=False
+    )
     birth_date = models.DateField(_("date of birth"), null=True, blank=True)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ['phone']
+    REQUIRED_FIELDS = ["phone"]
 
     objects = CustomUserManager()
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
-    
+        return f"{self.first_name} {self.last_name}"
+
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"

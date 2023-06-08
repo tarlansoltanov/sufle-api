@@ -157,7 +157,7 @@ class LogoutView(APIView):
             return Response(
                 {"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT
             )
-        except Exception as e:
+        except Exception:
             return Response(
                 {"message": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST
             )

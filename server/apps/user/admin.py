@@ -10,14 +10,39 @@ class CustomUserAdmin(UserAdmin):
     ordering = ["-id"]
     exclude = ("username",)
     fieldsets = (
-        ('Personal info', {'fields': ('first_name', 'last_name', 'email', 'phone', 'password', 'birth_date')}),
-        ('Important dates', {'fields': ('last_login', 'date_joined')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        (
+            "Personal info",
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "phone",
+                    "password",
+                    "birth_date",
+                )
+            },
+        ),
+        ("Important dates", {"fields": ("last_login", "date_joined")}),
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                )
+            },
+        ),
     )
-    add_fieldsets = ((
+    add_fieldsets = (
+        (
             None,
             {
                 "classes": ("wide",),
                 "fields": ("email", "phone", "password1", "password2"),
             },
-        ),)
+        ),
+    )

@@ -9,6 +9,7 @@ class CustomUserManager(BaseUserManager):
         * username is removed
         * email and password are required
     """
+
     def create_user(self, email, phone, password, **extra_fields):
         """
         Create and save a user with the given email, phone and password.
@@ -16,10 +17,10 @@ class CustomUserManager(BaseUserManager):
 
         if not email:
             raise ValueError(_("The Email must be set"))
-        
+
         if not phone:
             raise ValueError(_("The Phone must be set"))
-        
+
         email = self.normalize_email(email)
         user = self.model(email=email, phone=phone, **extra_fields)
         user.set_password(password)
@@ -36,8 +37,8 @@ class CustomUserManager(BaseUserManager):
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError(_("Superuser must have is_staff=True."))
-        
+
         if extra_fields.get("is_superuser") is not True:
             raise ValueError(_("Superuser must have is_superuser=True."))
-        
+
         return self.create_user(email, phone, password, **extra_fields)
