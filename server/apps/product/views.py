@@ -9,6 +9,7 @@ from server.apps.core.pagination import CustomPagination
 
 from .models import Product
 from .logic.serializers import ProductReadSerializer
+from .logic.filters import PriceRangeFilter
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
@@ -24,6 +25,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        PriceRangeFilter,
     ]
     filterset_fields = ["category", "is_new"]
     search_fields = ["name", "category__name"]
