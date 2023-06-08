@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "server.apps.category",
     "server.apps.product",
     "server.apps.announcement",
+    "server.apps.shop",
     # Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
