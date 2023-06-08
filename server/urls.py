@@ -28,10 +28,12 @@ urlpatterns = [
 from rest_framework import routers
 from server.apps.category.views import CategoryViewSet
 from server.apps.product.views import ProductViewSet
+from server.apps.announcement.views import BannerViewSet
 
 router = routers.DefaultRouter()
 router.register(r"category", CategoryViewSet, basename="category")
 router.register(r"product", ProductViewSet, basename="product")
+router.register(r"banner", BannerViewSet, basename="banner")
 
 urlpatterns += [
     path("api/", include(router.urls)),
