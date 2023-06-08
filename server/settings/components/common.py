@@ -16,6 +16,7 @@ from server.settings.components import BASE_DIR
 
 INSTALLED_APPS = [
     # Project Apps
+    "server.apps.core",
     "server.apps.user",
     "server.apps.category",
     "server.apps.product",
