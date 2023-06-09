@@ -11,6 +11,7 @@ class Shop(models.Model):
     working_hours = models.CharField(max_length=255)
     photo = models.ImageField(upload_to="shop")
     map_url = models.URLField(max_length=255)
+    is_main = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
