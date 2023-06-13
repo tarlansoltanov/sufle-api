@@ -1,4 +1,6 @@
 from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from server.apps.core.pagination import CustomPagination
 
@@ -13,3 +15,10 @@ class ShopViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ShopReadSerializer
     permission_classes = [permissions.AllowAny]
     pagination_class = CustomPagination
+
+    @action(detail=False, methods=["get"], pagination_class=None)
+    def main(self, request):
+        """Return main shop."""
+        queryset = Shop.objects.filter(is_main=True).first()
+        serializer = ShopReadSerializer(queryset, many=False)
+        return Response(serializer.data)
