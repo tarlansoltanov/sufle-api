@@ -25,7 +25,7 @@ class Vacancy(models.Model):
 class Requirement(models.Model):
     """Model definition for Requirement."""
 
-    vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE)
+    vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, related_name="requirements")
     description = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
