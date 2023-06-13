@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "server.apps.announcement",
     "server.apps.shop",
     "server.apps.contact",
+    "server.apps.gallery",
     # Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
