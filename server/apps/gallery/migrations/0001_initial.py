@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name': 'Gallery',
-                'verbose_name_plural': 'Gallerys',
+                'verbose_name_plural': 'Gallery Items',
             },
         ),
     ]
