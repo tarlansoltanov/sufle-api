@@ -30,12 +30,14 @@ from server.apps.category.views import CategoryViewSet
 from server.apps.product.views import ProductViewSet
 from server.apps.announcement.views import BannerViewSet
 from server.apps.shop.views import ShopViewSet
+from server.apps.contact.views import ContactViewSet
 
 router = routers.DefaultRouter()
 router.register(r"category", CategoryViewSet, basename="category")
 router.register(r"product", ProductViewSet, basename="product")
 router.register(r"banner", BannerViewSet, basename="banner")
 router.register(r"shop", ShopViewSet, basename="shop")
+router.register(r"contact", ContactViewSet, basename="contact")
 
 urlpatterns += [
     path("api/", include(router.urls)),
