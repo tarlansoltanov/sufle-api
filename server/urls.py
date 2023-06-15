@@ -33,6 +33,7 @@ from server.apps.shop.views import ShopViewSet
 from server.apps.contact.views import ContactViewSet
 from server.apps.gallery.views import GalleryViewSet
 from server.apps.vacancy.views import VacancyViewSet
+from server.apps.product.views import WeightViewSet
 
 router = routers.DefaultRouter()
 router.register(r"category", CategoryViewSet, basename="category")
@@ -42,6 +43,7 @@ router.register(r"shop", ShopViewSet, basename="shop")
 router.register(r"contact", ContactViewSet, basename="contact")
 router.register(r"gallery", GalleryViewSet, basename="gallery")
 router.register(r"vacancy", VacancyViewSet, basename="vacancy")
+router.register(r"weight", WeightViewSet, basename="weight")
 
 urlpatterns += [
     path("api/", include(router.urls)),

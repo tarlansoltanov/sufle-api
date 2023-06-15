@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from server.apps.category.logic.serializers import CategoryReadSerializer
 
-from ..models import Product, ProductImage
+from ..models import Product, ProductImage, ProductWeight
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -52,3 +52,13 @@ class ProductReadSerializer(serializers.ModelSerializer):
     def get_category(self, obj):
         """Get category of product."""
         return CategoryReadSerializer(obj.category, main=True).data
+
+
+class WeightReadSerializer(serializers.ModelSerializer):
+    """Serializer for Reading ProductWeight."""
+
+    class Meta:
+        """Meta definition for WeightReadSerializer."""
+
+        model = ProductWeight
+        fields = ("id", "person_count", "weight")

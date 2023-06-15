@@ -7,8 +7,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from server.apps.core.pagination import CustomPagination
 
-from .models import Product
-from .logic.serializers import ProductReadSerializer
+from .models import Product, ProductWeight
+from .logic.serializers import ProductReadSerializer, WeightReadSerializer
 from .logic.filters import PriceRangeFilter, CategoryFilter
 
 
@@ -28,7 +28,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         PriceRangeFilter,
         CategoryFilter,
     ]
-    
+
     search_fields = ["name", "category__name"]
     ordering_fields = ["price", "created_at"]
 
@@ -43,3 +43,10 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         products = self.queryset.filter(is_new=True)
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WeightViewSet(viewsets.ReadOnlyModelViewSet):
+    model = ProductWeight
+    serializer_class = WeightReadSerializer
+    queryset = ProductWeight.objects.all().order_by("person_count")
+    permission_classes = [permissions.AllowAny]
