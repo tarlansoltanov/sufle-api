@@ -9,7 +9,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 from .models import User
-from .logic.serializers import RegistrationSerializer
+from .logic.serializers import RegistrationSerializer, ProfileSerializer
 
 
 class LoginView(APIView):
@@ -161,3 +161,25 @@ class LogoutView(APIView):
             return Response(
                 {"message": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class ProfileView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    @swagger_auto_schema(
+        responses={
+            200: ProfileSerializer,
+            401: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "detail": openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        default="Authentication credentials were not provided or is incorrect.",
+                    ),
+                },
+            ),
+        },
+    )
+    def get(self, request):
+        user = request.user
+        return Response(ProfileSerializer(user).data, status=status.HTTP_200_OK)
