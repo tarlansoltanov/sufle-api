@@ -43,6 +43,13 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         return context
 
     @action(detail=False, methods=["GET"])
+    def discount(self, request):
+        """Get discounted products."""
+        products = self.queryset.filter(discount__gt=0)
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["GET"])
     def new(self, request):
         """Get new products."""
         products = self.queryset.filter(is_new=True)
