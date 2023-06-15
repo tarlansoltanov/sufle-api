@@ -7,7 +7,10 @@ from .logic.serializers import GalleryReadSerializer
 
 
 class GalleryViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Gallery.objects.all()
+    """ViewSet definition for Gallery."""
+
+    model = Gallery
     serializer_class = GalleryReadSerializer
+    queryset = Gallery.objects.all().order_by("-created_at")
     permission_classes = [permissions.AllowAny]
     pagination_class = CustomPagination

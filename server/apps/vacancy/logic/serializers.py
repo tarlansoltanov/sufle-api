@@ -16,6 +16,4 @@ class VacancyReadSerializer(serializers.ModelSerializer):
 
     def get_requirements(self, obj):
         """Get requirements for vacancy."""
-        return Requirement.objects.filter(vacancy=obj).values_list(
-            "description", flat=True
-        )
+        return obj.requirements.values_list("description", flat=True)

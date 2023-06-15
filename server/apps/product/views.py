@@ -13,10 +13,15 @@ from .logic.filters import PriceRangeFilter, CategoryFilter
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet definition for Product."""
+
     model = Product
     serializer_class = ProductReadSerializer
     queryset = (
-        Product.objects.select_related("category").prefetch_related("images").all()
+        Product.objects.select_related("category")
+        .prefetch_related("images")
+        .all()
+        .order_by("id")
     )
     permission_classes = [permissions.AllowAny]
     pagination_class = CustomPagination
@@ -46,6 +51,8 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class WeightViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet definition for ProductWeight."""
+
     model = ProductWeight
     serializer_class = WeightReadSerializer
     queryset = ProductWeight.objects.all().order_by("person_count")

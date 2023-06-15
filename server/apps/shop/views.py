@@ -11,8 +11,9 @@ from .logic.serializers import ShopReadSerializer
 class ShopViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet definition for Shop."""
 
-    queryset = Shop.objects.all()
+    model = Shop
     serializer_class = ShopReadSerializer
+    queryset = Shop.objects.all().order_by("id")
     permission_classes = [permissions.AllowAny]
     pagination_class = CustomPagination
 
