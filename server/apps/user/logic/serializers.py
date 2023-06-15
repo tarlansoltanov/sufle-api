@@ -40,3 +40,5 @@ class ProfileSerializer(serializers.ModelSerializer):
             "birth_date",
             "date_joined",
         ]
+
+        read_only_fields = ["id", "date_joined"]

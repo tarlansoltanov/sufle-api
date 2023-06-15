@@ -183,3 +183,48 @@ class ProfileView(APIView):
     def get(self, request):
         user = request.user
         return Response(ProfileSerializer(user).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        request_body=ProfileSerializer,
+        responses={
+            200: ProfileSerializer,
+            401: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        default="Authentication credentials were not provided or is incorrect.",
+                    ),
+                },
+            ),
+            400: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="Invalid Data"
+                    ),
+                    "errors": openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            "field": openapi.Schema(
+                                type=openapi.TYPE_ARRAY,
+                                items=openapi.Schema(type=openapi.TYPE_STRING),
+                            ),
+                        },
+                    ),
+                },
+            ),
+        },
+    )
+    def put(self, request):
+        user = request.user
+        serializer = ProfileSerializer(user, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(
+            {"message": "Invalid Data", "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
