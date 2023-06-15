@@ -42,3 +42,20 @@ class ProductImage(models.Model):
     def __str__(self):
         """Unicode representation of ProductImage."""
         return self.product.name
+
+
+class ProductWeight(models.Model):
+    """Model definition for ProductWeight."""
+
+    person_count = models.IntegerField()
+    weight = models.DecimalField(max_digits=4, decimal_places=3)
+
+    class Meta:
+        """Meta definition for ProductWeight."""
+
+        verbose_name = "ProductWeight"
+        verbose_name_plural = "ProductWeights"
+
+    def __str__(self):
+        """Unicode representation of ProductWeight."""
+        return f"{self.person_count} - {self.weight}"

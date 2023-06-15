@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Product, ProductImage
+from .models import Product, ProductImage, ProductWeight
 
 
 class ProductImageInline(admin.TabularInline):
@@ -15,3 +15,8 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ("category",)
 
     inlines = [ProductImageInline]
+
+
+@admin.register(ProductWeight)
+class ProductWeightAdmin(admin.ModelAdmin):
+    list_display = ("person_count", "weight")
