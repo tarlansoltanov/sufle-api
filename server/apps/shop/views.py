@@ -15,7 +15,6 @@ class ShopViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ShopReadSerializer
     queryset = Shop.objects.all().order_by("id")
     permission_classes = [permissions.AllowAny]
-    pagination_class = CustomPagination
 
     @action(detail=False, methods=["get"], pagination_class=None)
     def main(self, request):

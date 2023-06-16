@@ -14,7 +14,6 @@ class VacancyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = VacancyReadSerializer
     queryset = Vacancy.objects.all().order_by("-created_at")
     permission_classes = [permissions.AllowAny]
-    pagination_class = CustomPagination
 
     @action(detail=False, methods=["get"])
     def active(self, request):

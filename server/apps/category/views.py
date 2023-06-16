@@ -20,7 +20,6 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
         .order_by("id")
     )
     permission_classes = [permissions.AllowAny]
-    pagination_class = CustomPagination
 
     @action(methods=["get"], detail=False)
     def main(self, request):
