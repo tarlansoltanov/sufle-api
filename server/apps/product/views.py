@@ -9,7 +9,7 @@ from server.apps.core.pagination import CustomPagination
 
 from .models import Product, ProductWeight
 from .logic.serializers import ProductReadSerializer, WeightReadSerializer
-from .logic.filters import PriceRangeFilter, CategoryFilter
+from .logic.filters import PriceAndDiscountRangeFilter, CategoryFilter
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
@@ -30,31 +30,13 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
-        PriceRangeFilter,
+        PriceAndDiscountRangeFilter,
         CategoryFilter,
     ]
 
+    filterset_fields = ["is_new"]
     search_fields = ["name", "category__name"]
     ordering_fields = ["price", "created_at"]
-
-    def get_serializer_context(self):
-        context = super(ProductViewSet, self).get_serializer_context()
-        context.update({"request": self.request})
-        return context
-
-    @action(detail=False, methods=["GET"])
-    def discount(self, request):
-        """Get discounted products."""
-        products = self.queryset.filter(discount__gt=0)
-        serializer = self.get_serializer(products, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=["GET"])
-    def new(self, request):
-        """Get new products."""
-        products = self.queryset.filter(is_new=True)
-        serializer = self.get_serializer(products, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class WeightViewSet(viewsets.ReadOnlyModelViewSet):
