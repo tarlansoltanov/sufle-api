@@ -1,4 +1,6 @@
 from django.contrib.auth import authenticate, login
+from django.core.mail import send_mail
+from django.conf import settings
 
 from rest_framework import status, permissions
 from rest_framework.views import APIView
@@ -9,7 +11,10 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 from .models import User
-from .logic.serializers import RegistrationSerializer, ProfileSerializer
+from .logic.serializers import (
+    RegistrationSerializer,
+    ProfileSerializer,
+)
 
 
 class LoginView(APIView):
@@ -63,14 +68,8 @@ class LoginView(APIView):
 
         if user is not None:
             login(request, user)
-            refresh = RefreshToken.for_user(user)
 
-            response = {
-                "refresh": str(refresh),
-                "access": str(refresh.access_token),
-            }
-
-            return Response(response, status=status.HTTP_200_OK)
+            return Response(**user.get_tokens(), status=status.HTTP_200_OK)
 
         return Response("Invalid Credentials", status=status.HTTP_401_UNAUTHORIZED)
 
@@ -219,7 +218,7 @@ class ProfileView(APIView):
     def put(self, request):
         user = request.user
         serializer = ProfileSerializer(user, data=request.data, partial=True)
-        
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -228,3 +227,89 @@ class ProfileView(APIView):
             {"message": "Invalid Data", "errors": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class SendOTPView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        email = request.data.get("email")
+
+        if not email:
+            return Response(
+                {"message": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = User.objects.filter(email=email).first()
+
+        if not user:
+            return Response(
+                {"message": "Email does not exist."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        otp = user.generate_otp()
+
+        send_mail(
+            "Sufle Reset Password",
+            f"Your OTP Code is: {otp}",
+            settings.EMAIL_HOST_USER,
+            [email],
+        )
+
+        return Response({"message": "OTP sent."}, status=status.HTTP_200_OK)
+
+
+class CheckOTPView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        email = request.data.get("email")
+        otp = request.data.get("otp")
+
+        if not email or not otp:
+            return Response(
+                {"message": "Email and OTP is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = User.objects.filter(email=email).first()
+
+        if not user:
+            return Response(
+                {"message": "Email does not exist."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not user.verify_otp(otp):
+            return Response(
+                {"message": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return Response(
+            {"message": "OTP is valid.", **user.get_tokens()}, status=status.HTTP_200_OK
+        )
+
+
+class ResetPasswordView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        user = request.user
+        password = request.data.get("password")
+        confirm_password = request.data.get("confirm_password")
+
+        if not password or not confirm_password:
+            return Response(
+                {"message": "Password and Confirm Password is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if password != confirm_password:
+            return Response(
+                {"message": "Password and Confirm Password does not match"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.set_password(password)
+        user.save()
+
+        return Response({"message": "Password updated."}, status=status.HTTP_200_OK)
