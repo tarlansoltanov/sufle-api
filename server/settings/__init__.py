@@ -21,6 +21,7 @@ base_settings = (
     "components/healthcheck.py",  # Health check settings
     "components/logging.py",  # Logging settings
     "components/restframework.py",  # Django REST framework settings
+    "components/email.py",  # Email settings
     # Select the right env:
     f"environments/{ENV}.py",
 )
