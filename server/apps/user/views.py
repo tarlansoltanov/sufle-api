@@ -69,7 +69,7 @@ class LoginView(APIView):
         if user is not None:
             login(request, user)
 
-            return Response(**user.get_tokens(), status=status.HTTP_200_OK)
+            return Response({**user.get_tokens()}, status=status.HTTP_200_OK)
 
         return Response("Invalid Credentials", status=status.HTTP_401_UNAUTHORIZED)
 
