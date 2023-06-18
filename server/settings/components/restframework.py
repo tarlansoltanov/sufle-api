@@ -7,9 +7,9 @@ https://www.django-rest-framework.org/
 
 import datetime
 
-from server.settings.components.common import INSTALLED_APPS
+from server.settings.components.common import INSTALLED_APPS, MIDDLEWARE
 
-INSTALLED_APPS += ["rest_framework", "drf_yasg", "django_filters"]
+INSTALLED_APPS += ["rest_framework", "drf_yasg", "django_filters", "corsheaders"]
 
 
 # REST framework settings
@@ -29,3 +29,9 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=1),
 }
+
+# CORS settings
+
+MIDDLEWARE.insert(0, "corsheaders.middleware.CorsMiddleware")
+
+CORS_ALLOW_ALL_ORIGINS = True
