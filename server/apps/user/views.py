@@ -232,6 +232,33 @@ class ProfileView(APIView):
 class SendOTPView(APIView):
     permission_classes = (permissions.AllowAny,)
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "email": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        ),
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="OTP sent."
+                    ),
+                },
+            ),
+            400: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        default="Email is required | Email does not exist.",
+                    ),
+                },
+            ),
+        },
+    )
     def post(self, request):
         email = request.data.get("email")
 
@@ -262,6 +289,36 @@ class SendOTPView(APIView):
 class CheckOTPView(APIView):
     permission_classes = (permissions.AllowAny,)
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "email": openapi.Schema(type=openapi.TYPE_STRING),
+                "otp": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        ),
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="OTP is valid."
+                    ),
+                    "access": openapi.Schema(type=openapi.TYPE_STRING),
+                    "refresh": openapi.Schema(type=openapi.TYPE_STRING),
+                },
+            ),
+            400: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        default="Email and OTP is required | Email does not exist | Invalid OTP",
+                    ),
+                },
+            ),
+        },
+    )
     def post(self, request):
         email = request.data.get("email")
         otp = request.data.get("otp")
@@ -292,6 +349,42 @@ class CheckOTPView(APIView):
 class ResetPasswordView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "password": openapi.Schema(type=openapi.TYPE_STRING),
+                "confirm_password": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        ),
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="Password updated."
+                    ),
+                },
+            ),
+            400: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        default="Password and Confirm Password is required | Password and Confirm Password does not match",
+                    ),
+                },
+            ),
+            401: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "detail": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="Invalid Token"
+                    ),
+                },
+            ),
+        },
+    )
     def post(self, request):
         user = request.user
         password = request.data.get("password")
