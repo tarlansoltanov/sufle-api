@@ -71,13 +71,12 @@ class CategoryFilter(filters.BaseFilterBackend):
         ]
 
     def filter_queryset(self, request, queryset, view):
-        category_ids = request.query_params.get("category_id").split(",")
+        field = request.query_params.get("category_id")
+        category_ids = field.split(",") if field else []
 
         if category_ids:
             for category_id in category_ids:
-                category = Category.objects.get(
-                    id=category_id
-                )
+                category = Category.objects.get(id=category_id)
                 if category.main_category is None:
                     category_ids += list(
                         category.sub_categories.values_list("id", flat=True)
