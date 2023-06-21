@@ -35,3 +35,15 @@ SIMPLE_JWT = {
 MIDDLEWARE.insert(0, "corsheaders.middleware.CorsMiddleware")
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# DRF YASG (Yet Another Swagger Generator)
+
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+        },
+    },
+}
