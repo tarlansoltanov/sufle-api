@@ -55,7 +55,7 @@ class PriceAndDiscountRangeFilter(filters.BaseFilterBackend):
 
 class CategoryFilter(filters.BaseFilterBackend):
     """
-    Filter that allows to filter products by category.
+    Filter that allows to filter products by categories.
     """
 
     def get_schema_fields(self, view):
@@ -64,17 +64,25 @@ class CategoryFilter(filters.BaseFilterBackend):
                 name="category_id",
                 required=False,
                 location="query",
-                schema=coreschema.Integer(
-                    title="Category ID", description="Category ID"
+                schema=coreschema.String(
+                    title="Category id", description="Category id"
                 ),
             ),
         ]
 
     def filter_queryset(self, request, queryset, view):
-        if category_id := request.query_params.get("category_id"):
-            category = Category.objects.get(id=category_id)
-            queryset = queryset.filter(
-                category__in=[*category.sub_categories.all(), category]
-            )
+        category_ids = request.query_params.get("category_id").split(",")
+
+        if category_ids:
+            for category_id in category_ids:
+                category = Category.objects.get(
+                    id=category_id
+                )
+                if category.main_category is None:
+                    category_ids += list(
+                        category.sub_categories.values_list("id", flat=True)
+                    )
+
+            queryset = queryset.filter(category__id__in=category_ids)
 
         return queryset
