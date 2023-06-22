@@ -20,5 +20,7 @@ class ShopViewSet(viewsets.ReadOnlyModelViewSet):
     def main(self, request):
         """Return main shop."""
         queryset = Shop.objects.filter(is_main=True).first()
-        serializer = ShopReadSerializer(queryset, many=False)
+        serializer = ShopReadSerializer(
+            queryset, many=False, context={"request": request}
+        )
         return Response(serializer.data)
