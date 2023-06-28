@@ -76,6 +76,11 @@ class CategoryFilter(filters.BaseFilterBackend):
 
         if category_ids:
             for category_id in category_ids:
+                try:
+                    category_id = int(category_id)
+                except ValueError:
+                    category_ids.remove(category_id)
+                    continue
                 category = Category.objects.get(id=category_id)
                 if category.main_category is None:
                     category_ids += list(
