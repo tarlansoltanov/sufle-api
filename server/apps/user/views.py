@@ -260,9 +260,9 @@ class SendOTPView(APIView):
         },
     )
     def post(self, request):
-        email = request.data.get("email")
-
-        if not email:
+        try:
+            email = request.data["email"]
+        except Exception:
             return Response(
                 {"message": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -320,10 +320,10 @@ class CheckOTPView(APIView):
         },
     )
     def post(self, request):
-        email = request.data.get("email")
-        otp = request.data.get("otp")
-
-        if not email or not otp:
+        try:
+            email = request.data["email"]
+            otp = request.data["otp"]
+        except Exception:
             return Response(
                 {"message": "Email and OTP is required"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -387,10 +387,11 @@ class ResetPasswordView(APIView):
     )
     def post(self, request):
         user = request.user
-        password = request.data.get("password")
-        confirm_password = request.data.get("confirm_password")
 
-        if not password or not confirm_password:
+        try:
+            password = request.data["password"]
+            confirm_password = request.data["confirm_password"]
+        except Exception:
             return Response(
                 {"message": "Password and Confirm Password is required"},
                 status=status.HTTP_400_BAD_REQUEST,
