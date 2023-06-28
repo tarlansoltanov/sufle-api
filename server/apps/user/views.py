@@ -53,25 +53,36 @@ class LoginView(APIView):
         },
     )
     def post(self, request):
-        email_phone = request.data.get("email_phone")
-        password = request.data.get("password")
-
-        if email_phone is None or password is None:
-            return Response("Credentials missing", status=status.HTTP_400_BAD_REQUEST)
+        try:
+            email_phone = request.data["email_phone"]
+            password = request.data["password"]
+        except Exception:
+            return Response(
+                {"message": "Credentials missing"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         if "@" in email_phone:
-            email = User.objects.filter(email=email_phone).first().email
+            temp = User.objects.filter(email=email_phone).first()
         else:
-            email = User.objects.filter(phone=email_phone).first().email
+            temp = User.objects.filter(phone=email_phone).first()
+
+        if temp is None:
+            return Response(
+                {"message": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        email = temp.email
 
         user = authenticate(request, email=email, password=password)
 
-        if user is not None:
-            login(request, user)
+        if user is None:
+            return Response(
+                {"message": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
+            )
 
-            return Response({**user.get_tokens()}, status=status.HTTP_200_OK)
+        login(request, user)
 
-        return Response("Invalid Credentials", status=status.HTTP_401_UNAUTHORIZED)
+        return Response({**user.get_tokens()}, status=status.HTTP_200_OK)
 
 
 class RegistrationView(APIView):
