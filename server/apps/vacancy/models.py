@@ -8,7 +8,6 @@ class Vacancy(models.Model):
     title = models.CharField(max_length=255)
     photo = models.ImageField(upload_to="vacancy")
     description = models.TextField()
-    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -25,7 +24,9 @@ class Vacancy(models.Model):
 class Requirement(models.Model):
     """Model definition for Requirement."""
 
-    vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, related_name="requirements")
+    vacancy = models.ForeignKey(
+        Vacancy, on_delete=models.CASCADE, related_name="requirements"
+    )
     description = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 

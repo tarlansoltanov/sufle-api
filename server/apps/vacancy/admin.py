@@ -9,7 +9,6 @@ class RequirementInline(admin.TabularInline):
 
 @admin.register(Vacancy)
 class VacancyAdmin(admin.ModelAdmin):
-    list_display = ("name", "title", "is_active", "created_at")
-    filter_fields = ("is_active",)
+    list_display = ("name", "title", "created_at")
     search_fields = ("name", "title")
     inlines = [RequirementInline]
