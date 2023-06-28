@@ -20,13 +20,19 @@ class CategoryLogoSerializer(serializers.ModelSerializer):
         fields = ("white", "red", "grey")
 
     def get_white(self, obj):
-        return obj.logo_white.url if obj.logo_white else None
+        if obj.logo_white:
+            return self.context["request"].build_absolute_uri(obj.logo_white.url)
+        return None
 
     def get_red(self, obj):
-        return obj.logo_red.url if obj.logo_red else None
+        if obj.logo_red:
+            return self.context["request"].build_absolute_uri(obj.logo_red.url)
+        return None
 
     def get_grey(self, obj):
-        return obj.logo_grey.url if obj.logo_grey else None
+        if obj.logo_grey:
+            return self.context["request"].build_absolute_uri(obj.logo_grey.url)
+        return None
 
 
 class CategoryReadSerializer(serializers.ModelSerializer):
@@ -64,5 +70,5 @@ class CategoryReadSerializer(serializers.ModelSerializer):
     @swagger_serializer_method(serializer_or_field=CategoryLogoSerializer)
     def get_logo(self, obj):
         if obj.main_category is None:
-            return CategoryLogoSerializer(obj).data
+            return CategoryLogoSerializer(obj, context=self.context).data
         return None
