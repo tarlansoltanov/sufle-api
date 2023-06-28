@@ -36,7 +36,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
 
     filterset_fields = ["is_new"]
     search_fields = ["name", "category__name"]
-    ordering_fields = ["price", "created_at"]
+    ordering_fields = ["price", "created_at", "discount"]
 
 
 class WeightViewSet(viewsets.ReadOnlyModelViewSet):
