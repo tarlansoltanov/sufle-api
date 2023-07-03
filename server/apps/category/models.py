@@ -16,6 +16,7 @@ class Category(models.Model):
         blank=True,
         related_name="sub_categories",
     )
+    modified_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

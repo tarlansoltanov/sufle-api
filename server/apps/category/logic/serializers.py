@@ -46,7 +46,15 @@ class CategoryReadSerializer(serializers.ModelSerializer):
         """Meta definition for CategorySerializer."""
 
         model = Category
-        fields = ("id", "name", "logo", "main_category", "sub_categories", "created_at")
+        fields = (
+            "id",
+            "name",
+            "logo",
+            "main_category",
+            "sub_categories",
+            "modified_at",
+            "created_at",
+        )
 
     def __init__(self, *args, **kwargs):
         if kwargs.pop("main", None):

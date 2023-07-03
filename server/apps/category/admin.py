@@ -10,8 +10,12 @@ class CategoryAdmin(admin.ModelAdmin):
         "name",
         "is_main",
         "main_category",
+        "modified_at",
         "created_at",
     )
+
+    def get_queryset(self, request):
+        return super(CategoryAdmin, self).get_queryset(request).order_by("-modified_at")
 
     def is_main(self, obj):
         return obj.main_category is None

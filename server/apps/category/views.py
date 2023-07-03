@@ -17,7 +17,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
         Category.objects.select_related("main_category")
         .prefetch_related("sub_categories")
         .all()
-        .order_by("id")
+        .order_by("-modified_at")
     )
     permission_classes = [permissions.AllowAny]
 
