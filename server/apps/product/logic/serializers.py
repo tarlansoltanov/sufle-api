@@ -40,6 +40,7 @@ class ProductReadSerializer(serializers.ModelSerializer):
             "price",
             "discount",
             "is_new",
+            "views",
             "created_at",
         )
 

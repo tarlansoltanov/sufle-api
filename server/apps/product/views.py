@@ -21,7 +21,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         Product.objects.select_related("category")
         .prefetch_related("images")
         .all()
-        .order_by("id")
+        .order_by("-created_at")
     )
     permission_classes = [permissions.AllowAny]
     pagination_class = CustomPagination
@@ -36,7 +36,15 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
 
     filterset_fields = ["is_new"]
     search_fields = ["name", "category__name"]
-    ordering_fields = ["price", "created_at", "discount"]
+    ordering_fields = ["price", "created_at", "discount", "views"]
+
+    def retrieve(self, request, *args, **kwargs):
+        """Retrieve a product."""
+        instance = self.get_object()
+        instance.views += 1
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 class WeightViewSet(viewsets.ReadOnlyModelViewSet):
