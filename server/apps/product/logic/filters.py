@@ -1,4 +1,5 @@
 import coreapi
+import logging
 import coreschema
 from rest_framework import filters
 
@@ -37,15 +38,19 @@ class PriceAndDiscountRangeFilter(filters.BaseFilterBackend):
         ]
 
     def filter_queryset(self, request, queryset, view):
-        min_price = request.query_params.get("min_price")
-        max_price = request.query_params.get("max_price")
-        discount = request.query_params.get("discount")
-
-        if min_price:
+        try:
+            min_price = int(request.query_params.get("min_price"))
             queryset = queryset.filter(price__gte=min_price)
+        except Exception:
+            pass
 
-        if max_price:
+        try:
+            max_price = int(request.query_params.get("max_price"))
             queryset = queryset.filter(price__lte=max_price)
+        except Exception:
+            pass
+
+        discount = request.query_params.get("discount") == "true"
 
         if discount:
             queryset = queryset.filter(discount__gt=0)
