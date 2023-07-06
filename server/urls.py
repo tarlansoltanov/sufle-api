@@ -28,7 +28,7 @@ urlpatterns = [
 from rest_framework import routers
 from server.apps.category.views import CategoryViewSet
 from server.apps.product.views import ProductViewSet
-from server.apps.announcement.views import BannerViewSet
+from server.apps.announcement.views import BannerViewSet, AdvertViewSet
 from server.apps.shop.views import ShopViewSet
 from server.apps.contact.views import ContactViewSet
 from server.apps.gallery.views import GalleryViewSet
@@ -44,6 +44,7 @@ router.register(r"contact", ContactViewSet, basename="contact")
 router.register(r"gallery", GalleryViewSet, basename="gallery")
 router.register(r"vacancy", VacancyViewSet, basename="vacancy")
 router.register(r"weight", WeightViewSet, basename="weight")
+router.register(r"advert", AdvertViewSet, basename="advert")
 
 urlpatterns += [
     path("api/", include(router.urls)),
