@@ -9,7 +9,13 @@ import datetime
 
 from server.settings.components.common import INSTALLED_APPS, MIDDLEWARE
 
-INSTALLED_APPS += ["rest_framework", "drf_yasg", "django_filters", "corsheaders"]
+INSTALLED_APPS += [
+    "rest_framework",
+    "drf_yasg",
+    "django_filters",
+    "corsheaders",
+    "rest_framework_simplejwt.token_blacklist",
+]
 
 
 # REST framework settings
