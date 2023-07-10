@@ -43,7 +43,7 @@ class CategoryReadSerializer(serializers.ModelSerializer):
     logo = serializers.SerializerMethodField()
 
     class Meta:
-        """Meta definition for CategorySerializer."""
+        """Meta definition for CategoryReadSerializer."""
 
         model = Category
         fields = (
@@ -80,3 +80,74 @@ class CategoryReadSerializer(serializers.ModelSerializer):
         if obj.main_category is None:
             return CategoryLogoSerializer(obj, context=self.context).data
         return None
+
+
+class CategoryWriteSerializer(serializers.ModelSerializer):
+    """Serializer for Writing Categories."""
+
+    isMain = serializers.BooleanField(required=True, write_only=True)
+    logo_white = serializers.FileField(required=False)
+    logo_red = serializers.FileField(required=False)
+    logo_grey = serializers.FileField(required=False)
+
+    class Meta:
+        """Meta definition for CategoryWriteSerializer."""
+
+        model = Category
+        fields = (
+            "id",
+            "name",
+            "logo_white",
+            "logo_red",
+            "logo_grey",
+            "main_category",
+            "isMain",
+            "modified_at",
+            "created_at",
+        )
+        read_only_fields = ("id", "modified_at", "created_at")
+
+    def validate(self, data):
+        """Validate the serializer."""
+
+        errors = {}
+
+        if data.get("isMain"):
+            if data.get("main_category"):
+                errors[
+                    "main_category"
+                ] = "You can't set a main category to a main category"
+
+            if not data.get("logo_white"):
+                errors["logo_white"] = "This field is required."
+
+            if not data.get("logo_red"):
+                errors["logo_red"] = "This field is required."
+
+            if not data.get("logo_grey"):
+                errors["logo_grey"] = "This field is required."
+
+        else:
+            if not data.get("main_category"):
+                errors["main_category"] = "This field is required."
+
+            if data.get("main_category") and data.get("main_category").main_category:
+                errors[
+                    "main_category"
+                ] = "You can't set a sub category to a main category."
+
+            if data.get("logo_white"):
+                errors["logo_white"] = "You can't set a logo to a sub category."
+
+            if data.get("logo_red"):
+                errors["logo_red"] = "You can't set a logo to a sub category."
+
+            if data.get("logo_grey"):
+                errors["logo_grey"] = "You can't set a logo to a sub category."
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        data.pop("isMain")
+
+        return data
