@@ -121,13 +121,16 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
                 ] = "You can't set a main category to a main category"
 
             if not data.get("logo_white"):
-                errors["logo_white"] = "This field is required."
+                if not self.instance:
+                    errors["logo_white"] = "This field is required."
 
             if not data.get("logo_red"):
-                errors["logo_red"] = "This field is required."
+                if not self.instance:
+                    errors["logo_red"] = "This field is required."
 
             if not data.get("logo_grey"):
-                errors["logo_grey"] = "This field is required."
+                if not self.instance:
+                    errors["logo_grey"] = "This field is required."
 
         else:
             if not data.get("main_category"):
