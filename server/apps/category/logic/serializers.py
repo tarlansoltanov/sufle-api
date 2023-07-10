@@ -86,9 +86,10 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
     """Serializer for Writing Categories."""
 
     isMain = serializers.BooleanField(required=True, write_only=True)
-    logo_white = serializers.FileField(required=False)
-    logo_red = serializers.FileField(required=False)
-    logo_grey = serializers.FileField(required=False)
+    logo_white = serializers.FileField(required=False, write_only=True)
+    logo_red = serializers.FileField(required=False, write_only=True)
+    logo_grey = serializers.FileField(required=False, write_only=True)
+    logo = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         """Meta definition for CategoryWriteSerializer."""
@@ -97,6 +98,7 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
+            "logo",
             "logo_white",
             "logo_red",
             "logo_grey",
@@ -105,7 +107,7 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
             "modified_at",
             "created_at",
         )
-        read_only_fields = ("id", "modified_at", "created_at")
+        read_only_fields = ("id", "logo", "modified_at", "created_at")
 
     def validate(self, data):
         """Validate the serializer."""
@@ -151,3 +153,9 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
         data.pop("isMain")
 
         return data
+
+    @swagger_serializer_method(serializer_or_field=CategoryLogoSerializer)
+    def get_logo(self, obj):
+        if obj.main_category is None:
+            return CategoryLogoSerializer(obj, context=self.context).data
+        return None
