@@ -21,7 +21,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         Product.objects.select_related("category")
         .prefetch_related("images")
         .all()
-        .order_by("-created_at")
+        .order_by("-modified_at")
     )
     permission_classes = [permissions.AllowAny]
     pagination_class = CustomPagination

@@ -13,6 +13,7 @@ class Product(models.Model):
     discount = models.IntegerField(default=0)
     is_new = models.BooleanField(default=False)
     views = models.IntegerField(default=0)
+    modified_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
