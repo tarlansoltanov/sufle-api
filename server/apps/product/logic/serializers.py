@@ -64,3 +64,33 @@ class WeightReadSerializer(serializers.ModelSerializer):
 
         model = ProductWeight
         fields = ("id", "person_count", "weight")
+
+
+class ProductWriteSerializer(serializers.ModelSerializer):
+    """Serializer for Writing Products."""
+
+    class Meta:
+        """Meta definition for ProductWriteSerializer."""
+
+        model = Product
+        fields = (
+            "id",
+            "name",
+            "images",
+            "category",
+            "ingredients",
+            "price",
+            "discount",
+            "is_new",
+            "views",
+            "modified_at",
+            "created_at",
+        )
+        read_only_fields = ("id", "views", "created_at")
+        extra_kwargs = {"images": {"required": False}}
+
+    def to_representation(self, obj):
+        data = super(ProductWriteSerializer, self).to_representation(obj)
+        if data.get("category"):
+            data["category"] = CategoryReadSerializer(obj.category, main=True).data
+        return data
