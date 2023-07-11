@@ -1,4 +1,3 @@
-import logging
 from django.contrib.auth import authenticate, login
 from django.core.mail import send_mail
 from django.conf import settings
@@ -419,3 +418,34 @@ class ResetPasswordView(APIView):
         user.save()
 
         return Response({"message": "Password updated."}, status=status.HTTP_200_OK)
+
+
+class AccountDeleteView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="Account deleted."
+                    ),
+                },
+            ),
+            401: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="Invalid Credentials"
+                    ),
+                },
+            ),
+        },
+    )
+    def get(self, request):
+        user = request.user
+
+        user.delete()
+
+        return Response({"message": "Account deleted."}, status=status.HTTP_200_OK)
