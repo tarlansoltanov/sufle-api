@@ -109,6 +109,14 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ("id", "logo", "modified_at", "created_at")
 
+    def to_representation(self, obj):
+        data = super(CategoryWriteSerializer, self).to_representation(obj)
+        if data.get("main_category"):
+            data["main_category"] = CategoryReadSerializer(
+                obj.main_category, main=True
+            ).data
+        return data
+
     def validate(self, data):
         """Validate the serializer."""
 
