@@ -69,6 +69,10 @@ class WeightReadSerializer(serializers.ModelSerializer):
 class ProductWriteSerializer(serializers.ModelSerializer):
     """Serializer for Writing Products."""
 
+    uploaded_images = serializers.ListField(
+        child=serializers.ImageField(), write_only=True
+    )
+
     class Meta:
         """Meta definition for ProductWriteSerializer."""
 
@@ -77,6 +81,7 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "images",
+            "uploaded_images",
             "category",
             "ingredients",
             "price",
@@ -86,11 +91,21 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             "modified_at",
             "created_at",
         )
-        read_only_fields = ("id", "views", "created_at")
-        extra_kwargs = {"images": {"required": False}}
+        read_only_fields = ("id", "images", "views", "created_at")
 
     def to_representation(self, obj):
         data = super(ProductWriteSerializer, self).to_representation(obj)
         if data.get("category"):
             data["category"] = CategoryReadSerializer(obj.category, main=True).data
+        if data.get("images"):
+            data["images"] = ProductImageSerializer(
+                obj.images.all(), context=self.context, many=True
+            ).data
         return data
+
+    def create(self, validated_data):
+        uploaded_images = validated_data.pop("uploaded_images")
+        product = Product.objects.create(**validated_data)
+        for image in uploaded_images:
+            ProductImage.objects.create(product=product, image=image)
+        return product
