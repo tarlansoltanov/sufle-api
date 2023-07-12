@@ -11,6 +11,7 @@ from .views import (
     CheckOTPView,
     ResetPasswordView,
     AccountDeleteView,
+    CheckTokenView,
 )
 
 app_name = "users"
@@ -25,4 +26,5 @@ urlpatterns = [
     path("otp/check/", CheckOTPView.as_view(), name="otp_check"),
     path("reset-password/", ResetPasswordView.as_view(), name="reset_password"),
     path("delete-account/", AccountDeleteView.as_view(), name="account_delete"),
+    path("token/check/", CheckTokenView.as_view(), name="token_check"),
 ]

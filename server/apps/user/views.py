@@ -449,3 +449,30 @@ class AccountDeleteView(APIView):
         user.delete()
 
         return Response({"message": "Account deleted."}, status=status.HTTP_200_OK)
+
+
+class CheckTokenView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="Token is valid."
+                    ),
+                },
+            ),
+            401: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(
+                        type=openapi.TYPE_STRING, default="Invalid Token"
+                    ),
+                },
+            ),
+        },
+    )
+    def get(self, request):
+        return Response({"message": "Token is valid."}, status=status.HTTP_200_OK)
