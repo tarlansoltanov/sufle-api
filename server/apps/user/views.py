@@ -443,12 +443,14 @@ class AccountDeleteView(APIView):
             ),
         },
     )
-    def get(self, request):
+    def delete(self, request):
         user = request.user
 
         user.delete()
 
-        return Response({"message": "Account deleted."}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Account deleted."}, status=status.HTTP_204_NO_CONTENT
+        )
 
 
 class CheckTokenView(APIView):
