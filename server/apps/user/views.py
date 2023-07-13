@@ -24,6 +24,7 @@ class LoginView(APIView):
             properties={
                 "email_phone": openapi.Schema(type=openapi.TYPE_STRING),
                 "password": openapi.Schema(type=openapi.TYPE_STRING),
+                "admin": openapi.Schema(type=openapi.TYPE_BOOLEAN, default=False),
             },
         ),
         responses={
@@ -61,6 +62,9 @@ class LoginView(APIView):
                 {"message": "Credentials missing"}, status=status.HTTP_400_BAD_REQUEST
             )
 
+        admin = request.data.get("admin", False)
+        admin = True if admin == "true" or admin is True else False
+
         if "@" in email_phone:
             temp = User.objects.filter(email=email_phone).first()
         else:
@@ -76,6 +80,11 @@ class LoginView(APIView):
         user = authenticate(request, email=email, password=password)
 
         if user is None:
+            return Response(
+                {"message": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        if admin and not user.is_superuser:
             return Response(
                 {"message": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
             )
