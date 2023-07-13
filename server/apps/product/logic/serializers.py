@@ -72,6 +72,9 @@ class ProductWriteSerializer(serializers.ModelSerializer):
     uploaded_images = serializers.ListField(
         child=serializers.ImageField(), write_only=True
     )
+    old_images = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True, min_length=0, required=False
+    )
 
     class Meta:
         """Meta definition for ProductWriteSerializer."""
@@ -82,6 +85,7 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             "name",
             "images",
             "uploaded_images",
+            "old_images",
             "category",
             "ingredients",
             "price",
@@ -103,9 +107,27 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             ).data
         return data
 
+    def validate(self, attrs):
+        uploaded_images = attrs.get("uploaded_images", [])
+        if self.instance is None and len(uploaded_images) < 2:
+            raise serializers.ValidationError(
+                "At least 2 images must be uploaded for a product."
+            )
+        return super().validate(attrs)
+
     def create(self, validated_data):
-        uploaded_images = validated_data.pop("uploaded_images")
+        uploaded_images = validated_data.pop("uploaded_images", [])
         product = Product.objects.create(**validated_data)
         for image in uploaded_images:
             ProductImage.objects.create(product=product, image=image)
         return product
+
+    def update(self, instance, validated_data):
+        old_images = validated_data.pop("old_images", [])
+        uploaded_images = validated_data.pop("uploaded_images", [])
+        for image_id in old_images:
+            instance.images.filter(id=image_id).delete()
+
+        for image in uploaded_images:
+            ProductImage.objects.create(product=instance, image=image)
+        return super().update(instance, validated_data)
