@@ -141,7 +141,7 @@ class CategoryWriteSerializer(serializers.ModelSerializer):
                     errors["logo_grey"] = "This field is required."
 
         else:
-            if not data.get("main_category"):
+            if not data.get("main_category") and self.instance is None:
                 errors["main_category"] = "This field is required."
 
             if data.get("main_category") and data.get("main_category").main_category:
