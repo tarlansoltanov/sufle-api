@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   nginx:
@@ -32,6 +32,8 @@ services:
       image: project:prod
       build:
         target: production
+        args:
+          - DJANGO_ENV=production
       command: bash ./docker/django/gunicorn/start.sh
       volumes:
         - static:/var/www/static:rw
