@@ -18,7 +18,7 @@ ALLOWED_HOSTS = [
     config("DOMAIN_NAME"),
     config("DOMAIN_IP"),
     # For nginx proxy:
-    'web',
+    "web",
     # We need this value for `healthcheck` to work:
     "localhost",
 ]
@@ -61,3 +61,7 @@ if not config("STAGING", cast=bool, default=False):
 
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+    CSRF_TRUSTED_ORIGINS = [
+        f'https://{config("DOMAIN_NAME")}',
+    ]
