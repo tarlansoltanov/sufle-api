@@ -4,8 +4,8 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - 80:80
-      - 443:443
+      - 81:80
+      - 444:443
     volumes:
       - ./docker/nginx/prod/:/etc/nginx/conf.d/:ro
       - ./docker/certbot/conf/:/etc/nginx/ssl:ro
