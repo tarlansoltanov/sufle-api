@@ -109,9 +109,9 @@ class ProductWriteSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         uploaded_images = attrs.get("uploaded_images", [])
-        if self.instance is None and len(uploaded_images) < 2:
+        if self.instance is None and len(uploaded_images) < 1:
             raise serializers.ValidationError(
-                "At least 2 images must be uploaded for a product."
+                "At least 1 images must be uploaded for a product."
             )
         return super().validate(attrs)
 
