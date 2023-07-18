@@ -10,17 +10,18 @@ class RegistrationSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "first_name": {"required": True},
             "last_name": {"required": True},
-            "birth_date": {"required": True},
+            "birth_date": {"required": False},
+            "phone": {"required": False},
             "password": {"write_only": True},
         }
 
     def save(self):
         user = User(
-            email=self.validated_data["email"],
-            phone=self.validated_data["phone"],
             first_name=self.validated_data["first_name"],
             last_name=self.validated_data["last_name"],
-            birth_date=self.validated_data["birth_date"],
+            email=self.validated_data["email"],
+            phone=self.validated_data.get("phone", None),
+            birth_date=self.validated_data.get("birth_date", None),
         )
         password = self.validated_data["password"]
         user.set_password(password)

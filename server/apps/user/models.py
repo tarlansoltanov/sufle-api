@@ -19,7 +19,7 @@ class User(AbstractUser):
     )
 
     phone = models.CharField(
-        _("phone"), max_length=20, unique=True, null=False, blank=False
+        _("phone"), max_length=20, unique=True, null=True, blank=True
     )
     birth_date = models.DateField(_("date of birth"), null=True, blank=True)
 
@@ -27,7 +27,7 @@ class User(AbstractUser):
     otp_created_at = models.DateTimeField(_("otp created at"), null=True, blank=True)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["phone"]
+    REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
 
