@@ -12,7 +12,7 @@ class Gallery(models.Model):
         ("video", "Video"),
     )
 
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, blank=True, null=True)
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
     file = models.FileField(upload_to="gallery", blank=True, null=True)
     url = models.URLField(blank=True, null=True)
@@ -43,4 +43,4 @@ class Gallery(models.Model):
 
     def __str__(self):
         """Unicode representation of Gallery."""
-        return self.title
+        return "{} - {}".format(self.title, self.type)

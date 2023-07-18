@@ -13,6 +13,9 @@ class GalleryReadSerializer(serializers.ModelSerializer):
 
         model = Gallery
         fields = ("id", "title", "type", "url", "created_at")
+        extra_kwargs = {
+            "title": {"required": False},
+        }
 
     def get_url(self, obj):
         """Return URL for the file."""
