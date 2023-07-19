@@ -34,6 +34,9 @@ class GallerySerializer(serializers.ModelSerializer):
 
         errors = {}
 
+        if not attrs.get("type"):
+            raise serializers.ValidationError({"type": "This field is required."})
+
         if attrs["type"] == "image":
             if not attrs.get("file"):
                 if not self.instance or not self.instance.file.name:

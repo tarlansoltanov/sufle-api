@@ -1,20 +1,24 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
+
 from django_filters.rest_framework import DjangoFilterBackend
 
+from server.apps.core.logic.permissions import IsAdminOrReadOnly
+
 from .models import Gallery
-from .logic.serializers import GalleryReadSerializer
+from .logic.serializers import GallerySerializer
 
 
-class GalleryViewSet(viewsets.ReadOnlyModelViewSet):
+class GalleryViewSet(viewsets.ModelViewSet):
     """ViewSet definition for Gallery."""
 
     model = Gallery
-    serializer_class = GalleryReadSerializer
-    queryset = Gallery.objects.all().order_by("-created_at")
-    permission_classes = [permissions.AllowAny]
+    queryset = Gallery.objects.all().order_by("-modified_at")
+
+    serializer_class = GallerySerializer
+
+    permission_classes = [IsAdminOrReadOnly]
 
     filter_backends = [
         DjangoFilterBackend,
     ]
-
     filterset_fields = ["type"]
