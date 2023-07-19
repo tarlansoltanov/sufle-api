@@ -2,8 +2,6 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from server.apps.core.pagination import CustomPagination
-
 from .models import Shop
 from .logic.serializers import ShopReadSerializer
 

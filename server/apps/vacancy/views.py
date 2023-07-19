@@ -1,7 +1,4 @@
 from rest_framework import viewsets, permissions
-from rest_framework.decorators import action
-
-from server.apps.core.pagination import CustomPagination
 
 from .models import Vacancy
 from .logic.serializers import VacancyReadSerializer

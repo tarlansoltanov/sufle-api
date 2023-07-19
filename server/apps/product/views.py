@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions, filters
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from server.apps.core.pagination import CustomPagination
+from server.apps.core.logic.pagination import CustomPagination
 from server.apps.core.logic.permissions import IsAdminOrReadOnly
 
 from .models import Product, ProductWeight
