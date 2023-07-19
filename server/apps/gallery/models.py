@@ -16,6 +16,7 @@ class Gallery(models.Model):
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
     file = models.FileField(upload_to="gallery", blank=True, null=True)
     url = models.URLField(blank=True, null=True)
+    modified_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
