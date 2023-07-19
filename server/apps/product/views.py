@@ -1,11 +1,10 @@
-from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework import filters
+from rest_framework import viewsets, permissions, filters
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from server.apps.core.pagination import CustomPagination
+from server.apps.core.logic.permissions import IsAdminOrReadOnly
 
 from .models import Product, ProductWeight
 from .logic.serializers import (
@@ -26,6 +25,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         .all()
         .order_by("-modified_at")
     )
+
+    permission_classes = [IsAdminOrReadOnly]
+
     pagination_class = CustomPagination
 
     filter_backends = [
@@ -44,13 +46,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         if self.action in ["create", "update", "partial_update", "destroy"]:
             return ProductWriteSerializer
         return ProductReadSerializer
-
-    def get_permissions(self):
-        if self.action in ["create", "update", "partial_update", "destroy"]:
-            self.permission_classes = [permissions.IsAdminUser]
-        else:
-            self.permission_classes = [permissions.AllowAny]
-        return super(self.__class__, self).get_permissions()
 
     def retrieve(self, request, *args, **kwargs):
         """Retrieve a product."""
