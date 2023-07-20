@@ -3,7 +3,7 @@ version: "3.8"
 services:
   web:
     <<: &web
-      image: project:prod
+      image: sufle:prod
       build:
         target: production
         args:
@@ -12,7 +12,6 @@ services:
       volumes:
         - ./staticfiles:/var/www/static:rw
         - ./media:/var/www/media:rw
-        - .:/app:rw
       environment:
         - DJANGO_ENV=production
         - STAGING=0

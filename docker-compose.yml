@@ -23,7 +23,7 @@ services:
       - webcache
 
   web:
-    image: project:dev
+    image: sufle:dev
     build:
       target: development
       context: .
@@ -34,6 +34,7 @@ services:
       - "8000:8000"
     volumes:
       - ./logs:/app/logs:rw
+      - .:/app:rw
     env_file:
       - ./config/.env
     environment:
