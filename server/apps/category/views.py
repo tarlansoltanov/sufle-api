@@ -13,7 +13,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     """ViewSet definition for Category."""
 
     model = Category
-    queryset = Category.objects.all().order_by("-modified_at")
+    queryset = Category.objects.all()
 
     permission_classes = [IsAdminOrReadOnly]
 
