@@ -1,14 +1,15 @@
 from django.db import models
 
+from server.apps.core.models import BaseModel
 
-class Banner(models.Model):
+
+class Banner(BaseModel):
     """Model definition for Banner."""
 
     photo = models.ImageField(upload_to="banner/")
     deadline = models.DateField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         """Meta definition for Banner."""
 
         verbose_name = "Banner"
@@ -16,19 +17,18 @@ class Banner(models.Model):
 
     def __str__(self):
         """Unicode representation of Banner."""
+
         return f"{self.photo} - {self.deadline}"
 
 
-class Advert(models.Model):
+class Advert(BaseModel):
     """Model definition for Advert."""
 
     photo = models.ImageField(upload_to="advert/")
     title = models.CharField(max_length=255)
     category = models.ForeignKey("category.Category", on_delete=models.CASCADE)
-    modified_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         """Meta definition for Advert."""
 
         verbose_name = "Advert"
@@ -36,4 +36,5 @@ class Advert(models.Model):
 
     def __str__(self):
         """Unicode representation of Advert."""
+
         return f"{self.title} - {self.category}"

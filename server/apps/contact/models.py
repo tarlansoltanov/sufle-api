@@ -1,7 +1,9 @@
 from django.db import models
 
+from server.apps.core.models import BaseModel
 
-class Contact(models.Model):
+
+class Contact(BaseModel):
     """Model definition for Contact."""
 
     TYPES_CHOICES = (
@@ -16,9 +18,8 @@ class Contact(models.Model):
     type = models.PositiveSmallIntegerField(choices=TYPES_CHOICES, default=1)
     message = models.TextField()
     is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         """Meta definition for Contact."""
 
         verbose_name = "Contact"
@@ -26,4 +27,5 @@ class Contact(models.Model):
 
     def __str__(self):
         """Unicode representation of Contact."""
+
         return f"{self.name} {self.surname}"

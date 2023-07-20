@@ -1,16 +1,17 @@
 from django.db import models
 
+from server.apps.core.models import BaseModel
 
-class Vacancy(models.Model):
+
+class Vacancy(BaseModel):
     """Model definition for Vacancy."""
 
     name = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     photo = models.ImageField(upload_to="vacancy")
     description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         """Meta definition for Vacancy."""
 
         verbose_name = "Vacancy"
@@ -18,19 +19,19 @@ class Vacancy(models.Model):
 
     def __str__(self):
         """Unicode representation of Vacancy."""
+
         return self.name
 
 
-class Requirement(models.Model):
+class Requirement(BaseModel):
     """Model definition for Requirement."""
 
     vacancy = models.ForeignKey(
         Vacancy, on_delete=models.CASCADE, related_name="requirements"
     )
     description = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         """Meta definition for Requirement."""
 
         verbose_name = "Requirement"
@@ -38,4 +39,5 @@ class Requirement(models.Model):
 
     def __str__(self):
         """Unicode representation of Requirement."""
+
         return self.description

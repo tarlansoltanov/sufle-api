@@ -1,7 +1,9 @@
 from django.db import models
 
+from server.apps.core.models import BaseModel
 
-class Shop(models.Model):
+
+class Shop(BaseModel):
     """Model definition for Shop."""
 
     name = models.CharField(max_length=255)
@@ -12,9 +14,8 @@ class Shop(models.Model):
     photo = models.ImageField(upload_to="shop")
     map_url = models.URLField(max_length=255)
     is_main = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         """Meta definition for Shop."""
 
         verbose_name = "Shop"
@@ -22,4 +23,5 @@ class Shop(models.Model):
 
     def __str__(self):
         """Unicode representation of Shop."""
+
         return self.name

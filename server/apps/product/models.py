@@ -1,7 +1,9 @@
 from django.db import models
 
+from server.apps.core.models import BaseModel
 
-class Product(models.Model):
+
+class Product(BaseModel):
     """Model definition for Product."""
 
     name = models.CharField(max_length=255)
@@ -13,10 +15,8 @@ class Product(models.Model):
     discount = models.IntegerField(default=0)
     is_new = models.BooleanField(default=False)
     views = models.IntegerField(default=0)
-    modified_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         """Meta definition for Product."""
 
         verbose_name = "Product"
@@ -24,10 +24,11 @@ class Product(models.Model):
 
     def __str__(self):
         """Unicode representation of Product."""
+        
         return self.name
 
 
-class ProductImage(models.Model):
+class ProductImage(BaseModel):
     """Model definition for ProductImage."""
 
     product = models.ForeignKey(
@@ -35,7 +36,7 @@ class ProductImage(models.Model):
     )
     image = models.ImageField(upload_to="product")
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         """Meta definition for ProductImage."""
 
         verbose_name = "ProductImage"
@@ -43,16 +44,17 @@ class ProductImage(models.Model):
 
     def __str__(self):
         """Unicode representation of ProductImage."""
+
         return self.product.name
 
 
-class ProductWeight(models.Model):
+class ProductWeight(BaseModel):
     """Model definition for ProductWeight."""
 
     person_count = models.IntegerField()
     weight = models.DecimalField(max_digits=4, decimal_places=3)
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         """Meta definition for ProductWeight."""
 
         verbose_name = "ProductWeight"
@@ -60,4 +62,5 @@ class ProductWeight(models.Model):
 
     def __str__(self):
         """Unicode representation of ProductWeight."""
+
         return f"{self.person_count} - {self.weight}"

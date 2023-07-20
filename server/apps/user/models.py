@@ -31,27 +31,39 @@ class User(AbstractUser):
 
     objects = CustomUserManager()
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-
     class Meta:
+        """Meta definition for User."""
+
         verbose_name = "User"
         verbose_name_plural = "Users"
-        ordering = ["-id"]
+        ordering = ["-date_joined"]
+
+    def __str__(self):
+        """Unicode representation of User."""
+
+        return f"{self.first_name} {self.last_name}"
 
     def generate_otp(self):
+        """Generate OTP for user."""
+
         self.otp = random.randint(100000, 999999)
         self.otp_created_at = timezone.now()
         self.save()
         return self.otp
 
     def verify_otp(self, otp):
+        """Verify OTP for user."""
+
         return self.otp == otp if self.is_otp_valid() else False
 
     def is_otp_valid(self):
+        """Check if OTP is valid."""
+
         return timezone.now() <= timezone.timedelta(minutes=5) + self.otp_created_at
 
     def get_tokens(self):
+        """Get tokens for user."""
+
         refresh = RefreshToken.for_user(self)
 
         return {
