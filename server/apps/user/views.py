@@ -83,7 +83,7 @@ class LoginView(APIView):
                 {"message": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
-        if admin and not user.is_superuser:
+        if admin and not user.is_staff:
             return Response(
                 {"message": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
             )
