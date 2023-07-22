@@ -6,6 +6,9 @@ from ..models import User
 class UserSerializer(serializers.ModelSerializer):
     """Serializer definition for User."""
 
+    email = serializers.EmailField(required=True)
+    phone = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+
     class Meta:
         """Meta definition for UserSerializer."""
 
@@ -36,6 +39,42 @@ class UserSerializer(serializers.ModelSerializer):
             "password": {"write_only": True},
         }
 
+    def validate_email(self, value):
+        email = value.lower()
+
+        if self.instance and self.instance.email == email:
+            return email
+
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                "Bu email istifadədədir! Zəhmət olmasa başqa email daxil edin!"
+            )
+
+        return email
+
+    def validate_phone(self, phone):
+        if not phone:
+            return None
+
+        if phone == "":
+            return None
+
+        if self.instance and self.instance.phone == phone:
+            return phone
+
+        if User.objects.filter(phone=phone).exists():
+            raise serializers.ValidationError(
+                "Bu telefon istifadədədir! Zəhmət olmasa başqa telefon daxil edin!"
+            )
+
+        return phone
+
+    def get_validation_exclusions(self):
+        exclusions = super(UserSerializer, self).get_validation_exclusions()
+        if self.instance:
+            return exclusions + ["email"]
+        return exclusions
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
@@ -62,8 +101,15 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
 
-    def update(self, instance, validated_data):
+    def update(self, instance, validated_data, partial=False):
         """Update user."""
+
+        if partial:
+            for key, value in validated_data.items():
+                setattr(instance, key, value)
+
+            instance.save()
+            return instance
 
         password = validated_data.pop("password", None)
         user = super().update(instance, validated_data)
