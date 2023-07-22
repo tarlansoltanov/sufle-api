@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login
 from django.core.mail import send_mail
 from django.conf import settings
 
-from rest_framework import status, permissions
+from rest_framework import status, permissions, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -10,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
-from server.apps.core.logic.permissions import IsStaff
+from server.apps.core.logic.permissions import IsStaff, IsAdmin
 
 from .models import User
 from .logic.serializers import UserSerializer
@@ -509,3 +509,31 @@ class CustomerListView(APIView):
     def get(self, request):
         customers = User.objects.filter(is_staff=False)
         return Response(self.serializer_class(customers, many=True).data)
+
+
+class StaffViewSet(viewsets.ModelViewSet):
+    """ViewSet definition for Shop."""
+
+    model = User
+    queryset = User.objects.filter(is_staff=True, is_superuser=False)
+
+    serializer_class = UserSerializer
+
+    permission_classes = [IsAdmin]
+
+    def create(self, request):
+        serializer = self.serializer_class(
+            data=request.data, context={"is_staff": True}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, pk=None):
+        instance = self.get_object()
+        serializer = self.serializer_class(
+            instance, data=request.data, context={"is_staff": True}, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
