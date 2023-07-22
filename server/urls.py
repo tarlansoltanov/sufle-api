@@ -48,7 +48,7 @@ router.register(r"advert", AdvertViewSet, basename="advert")
 
 urlpatterns += [
     path("api/", include(router.urls)),
-    path("api/auth/", include("server.apps.user.urls")),
+    path("api/", include("server.apps.user.urls")),
 ]
 
 
