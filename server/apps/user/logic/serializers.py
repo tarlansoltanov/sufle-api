@@ -3,34 +3,12 @@ from rest_framework import serializers
 from ..models import User
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
+    """Serializer definition for User."""
+
     class Meta:
-        model = User
-        fields = ["first_name", "last_name", "email", "phone", "birth_date", "password"]
-        extra_kwargs = {
-            "first_name": {"required": True},
-            "last_name": {"required": True},
-            "birth_date": {"required": False},
-            "phone": {"required": False},
-            "password": {"write_only": True},
-        }
+        """Meta definition for UserSerializer."""
 
-    def save(self):
-        user = User(
-            first_name=self.validated_data["first_name"],
-            last_name=self.validated_data["last_name"],
-            email=self.validated_data["email"],
-            phone=self.validated_data.get("phone", None),
-            birth_date=self.validated_data.get("birth_date", None),
-        )
-        password = self.validated_data["password"]
-        user.set_password(password)
-        user.save()
-        return user
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
         model = User
         fields = [
             "id",
@@ -39,7 +17,50 @@ class ProfileSerializer(serializers.ModelSerializer):
             "email",
             "phone",
             "birth_date",
+            "is_active",
+            "is_staff",
+            "is_superuser",
+            "date_joined",
+            "password",
+        ]
+        read_only_fields = [
+            "id",
+            "is_active",
+            "is_staff",
+            "is_superuser",
             "date_joined",
         ]
+        extra_kwargs = {
+            "phone": {"required": False},
+            "birth_date": {"required": False},
+            "password": {"write_only": True},
+        }
 
-        read_only_fields = ["id", "date_joined"]
+    def create(self, validated_data):
+        """Create user."""
+
+        is_staff = self.context.get("is_staff", False)
+        is_superuser = self.context.get("is_superuser", False)
+
+        if is_staff:
+            user = User.objects.create_staff(**validated_data)
+
+        elif is_superuser:
+            user = User.objects.create_superuser(**validated_data)
+
+        else:
+            user = User.objects.create_user(**validated_data)
+
+        return user
+
+    def update(self, instance, validated_data):
+        """Update user."""
+
+        password = validated_data.pop("password", None)
+        user = super().update(instance, validated_data)
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        return user

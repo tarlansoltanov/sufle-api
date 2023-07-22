@@ -11,10 +11,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 from .models import User
-from .logic.serializers import (
-    RegistrationSerializer,
-    ProfileSerializer,
-)
+from .logic.serializers import UserSerializer
 
 
 class LoginView(APIView):
@@ -96,9 +93,9 @@ class LoginView(APIView):
 
 class RegistrationView(APIView):
     @swagger_auto_schema(
-        request_body=RegistrationSerializer,
+        request_body=UserSerializer,
         responses={
-            201: RegistrationSerializer,
+            201: UserSerializer,
             400: openapi.Schema(
                 type=openapi.TYPE_OBJECT,
                 properties={
@@ -119,7 +116,7 @@ class RegistrationView(APIView):
         },
     )
     def post(self, request):
-        serializer = RegistrationSerializer(data=request.data)
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -187,7 +184,7 @@ class ProfileView(APIView):
 
     @swagger_auto_schema(
         responses={
-            200: ProfileSerializer,
+            200: UserSerializer,
             401: openapi.Schema(
                 type=openapi.TYPE_OBJECT,
                 properties={
@@ -201,12 +198,12 @@ class ProfileView(APIView):
     )
     def get(self, request):
         user = request.user
-        return Response(ProfileSerializer(user).data, status=status.HTTP_200_OK)
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
-        request_body=ProfileSerializer,
+        request_body=UserSerializer,
         responses={
-            200: ProfileSerializer,
+            200: UserSerializer,
             401: openapi.Schema(
                 type=openapi.TYPE_OBJECT,
                 properties={
@@ -237,7 +234,7 @@ class ProfileView(APIView):
     )
     def put(self, request):
         user = request.user
-        serializer = ProfileSerializer(user, data=request.data, partial=True)
+        serializer = UserSerializer(user, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
