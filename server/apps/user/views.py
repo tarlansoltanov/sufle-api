@@ -10,6 +10,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
+from server.apps.core.logic.permissions import IsStaff
+
 from .models import User
 from .logic.serializers import UserSerializer
 
@@ -484,3 +486,26 @@ class CheckTokenView(APIView):
     )
     def get(self, request):
         return Response({"message": "Token is valid."}, status=status.HTTP_200_OK)
+
+
+class CustomerListView(APIView):
+    permission_classes = (IsStaff,)
+    serializer_class = UserSerializer
+
+    @swagger_auto_schema(
+        responses={
+            200: UserSerializer(many=True),
+            401: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "detail": openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        default="Authentication credentials were not provided.",
+                    ),
+                },
+            ),
+        },
+    )
+    def get(self, request):
+        customers = User.objects.filter(is_staff=False)
+        return Response(self.serializer_class(customers, many=True).data)

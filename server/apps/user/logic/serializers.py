@@ -36,6 +36,15 @@ class UserSerializer(serializers.ModelSerializer):
             "password": {"write_only": True},
         }
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        if not data.get("is_staff", False):
+            data.pop("is_staff")
+            data.pop("is_superuser")
+
+        return data
+
     def create(self, validated_data):
         """Create user."""
 

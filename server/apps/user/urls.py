@@ -12,6 +12,7 @@ from .views import (
     ResetPasswordView,
     AccountDeleteView,
     CheckTokenView,
+    CustomerListView,
 )
 
 app_name = "users"
@@ -30,4 +31,6 @@ urlpatterns = [
     # Account
     path("account/profile/", ProfileView.as_view(), name="profile"),
     path("account/delete/", AccountDeleteView.as_view(), name="account_delete"),
+    # Customers
+    path("customers/", CustomerListView.as_view(), name="customer_list"),
 ]
