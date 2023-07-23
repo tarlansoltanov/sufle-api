@@ -34,7 +34,10 @@ class ShopSerializer(serializers.ModelSerializer):
         return data
 
     def validate_is_main(self, value):
-        if value:
-            if Shop.objects.filter(is_main=True).exists():
-                raise serializers.ValidationError("Əsas mağaza artıq mövcuddur!")
+        if value is True:
+            main_shop = Shop.objects.filter(is_main=True).first()
+            if main_shop:
+                main_shop.is_main = False
+                main_shop.save()
+
         return value
