@@ -3,13 +3,32 @@ from rest_framework import serializers
 from ..models import Shop
 
 
-class ShopReadSerializer(serializers.ModelSerializer):
-    photo = serializers.SerializerMethodField()
+class ShopSerializer(serializers.ModelSerializer):
+    """Serializer definition for Shop model."""
 
     class Meta:
-        model = Shop
-        fields = "__all__"
+        """Meta definition for ShopSerializer."""
 
-    def get_photo(self, obj):
+        model = Shop
+        fields = [
+            "id",
+            "name",
+            "address",
+            "phone",
+            "email",
+            "working_hours",
+            "photo",
+            "map_url",
+            "is_main",
+            "modified_at",
+            "created_at",
+        ]
+        read_only_fields = ["id", "modified_at", "created_at"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
         request = self.context.get("request")
-        return request.build_absolute_uri(obj.photo.url)
+
+        data["photo"] = request.build_absolute_uri(instance.photo.url)
+
+        return data
