@@ -1,13 +1,16 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
+
+from server.apps.core.logic.permissions import IsStaffOrReadOnly
 
 from .models import Vacancy
-from .logic.serializers import VacancyReadSerializer
+from .logic.serializers import VacancySerializer
 
 
-class VacancyViewSet(viewsets.ReadOnlyModelViewSet):
+class VacancyViewSet(viewsets.ModelViewSet):
     """ViewSet for Vacancy."""
 
     model = Vacancy
-    serializer_class = VacancyReadSerializer
-    queryset = Vacancy.objects.all().order_by("-created_at")
-    permission_classes = [permissions.AllowAny]
+    queryset = Vacancy.objects.all().prefetch_related("requirements")
+
+    serializer_class = VacancySerializer
+    permission_classes = [IsStaffOrReadOnly]
