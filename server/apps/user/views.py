@@ -13,19 +13,12 @@ from drf_yasg.utils import swagger_auto_schema
 from server.apps.core.logic.permissions import IsStaff, IsAdmin
 
 from .models import User
-from .logic.serializers import UserSerializer
+from .logic.serializers import UserSerializer, LoginSerializer
 
 
 class LoginView(APIView):
     @swagger_auto_schema(
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "email_phone": openapi.Schema(type=openapi.TYPE_STRING),
-                "password": openapi.Schema(type=openapi.TYPE_STRING),
-                "admin": openapi.Schema(type=openapi.TYPE_BOOLEAN, default=False),
-            },
-        ),
+        request_body=LoginSerializer,
         responses={
             200: openapi.Schema(
                 type=openapi.TYPE_OBJECT,
@@ -53,39 +46,21 @@ class LoginView(APIView):
         },
     )
     def post(self, request):
-        try:
-            email_phone = request.data["email_phone"]
-            password = request.data["password"]
-        except Exception:
+        """Login view for user."""
+
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = authenticate(
+            request,
+            email=serializer.validated_data["email_phone"],
+            password=serializer.validated_data["password"],
+        )
+
+        if not user:
             return Response(
-                {"message": "Credentials missing"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        admin = request.data.get("admin", False)
-        admin = True if admin == "true" or admin is True else False
-
-        if "@" in email_phone:
-            temp = User.objects.filter(email=email_phone).first()
-        else:
-            temp = User.objects.filter(phone=email_phone).first()
-
-        if temp is None:
-            return Response(
-                {"message": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        email = temp.email
-
-        user = authenticate(request, email=email, password=password)
-
-        if user is None:
-            return Response(
-                {"message": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        if admin and not user.is_staff:
-            return Response(
-                {"message": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
+                {"detail": "Giriş məlumatları yanlışdır!"},
+                status=status.HTTP_401_UNAUTHORIZED,
             )
 
         login(request, user)
@@ -119,14 +94,9 @@ class RegistrationView(APIView):
     )
     def post(self, request):
         serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(
-            {"message": "Invalid Credentials", "errors": serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class LogoutView(APIView):
