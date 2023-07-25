@@ -46,8 +46,14 @@ class LoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     """Serializer definition for User Model."""
 
-    email = serializers.EmailField(required=True)
-    phone = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    email = serializers.EmailField(
+        required=True,
+        error_messages={
+            "required": "Bu xana boş ola bilməz!",
+            "blank": "Bu xana boş ola bilməz!",
+        },
+    )
+    phone = serializers.CharField(required=False, allow_null=True)
 
     class Meta:
         """Meta definition for UserSerializer."""
@@ -74,9 +80,29 @@ class UserSerializer(serializers.ModelSerializer):
             "date_joined",
         ]
         extra_kwargs = {
-            "phone": {"required": False},
-            "birth_date": {"required": False},
-            "password": {"write_only": True},
+            "first_name": {
+                "required": True,
+                "error_messages": {
+                    "required": "Bu xana boş ola bilməz!",
+                    "blank": "Bu xana boş ola bilməz!",
+                },
+            },
+            "last_name": {
+                "error_messages": {
+                    "required": "Bu xana boş ola bilməz!",
+                    "blank": "Bu xana boş ola bilməz!",
+                }
+            },
+            "birth_date": {
+                "required": False,
+            },
+            "password": {
+                "write_only": True,
+                "error_messages": {
+                    "required": "Bu xana boş ola bilməz!",
+                    "blank": "Bu xana boş ola bilməz!",
+                },
+            },
         }
 
     def validate_email(self, value):
@@ -184,7 +210,7 @@ class OTPCheckSerializer(serializers.Serializer):
         user = User.objects.filter(email=email).first()
 
         if user.otp != otp:
-            raise serializers.ValidationError("Yanlış OTP daxil etdiniz!")
+            raise serializers.ValidationError("Bu OTP Yanlışdır!")
 
         return data
 

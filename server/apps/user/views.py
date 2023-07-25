@@ -19,7 +19,12 @@ from server.apps.core.logic.schemas import (
 )
 
 from .models import User
-from .logic.serializers import UserSerializer, LoginSerializer
+from .logic.serializers import (
+    UserSerializer,
+    LoginSerializer,
+    OTPCheckSerializer,
+    PasswordResetSerializer,
+)
 from .logic.schemas import AUTH_TOKENS
 
 
@@ -84,17 +89,25 @@ class LogoutView(APIView):
         },
     )
     def post(self, request):
-        try:
-            refresh_token = request.data["refresh"]
-            token = RefreshToken(refresh_token)
-            token.blacklist()
+        refresh_token = request.data.get("refresh")
+
+        if not refresh_token:
             return Response(
-                {"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT
+                {"refresh": ["Bu xana boş ola bilməz!"]},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception:
+
+        token = RefreshToken(refresh_token)
+
+        if not token:
             return Response(
-                {"message": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST
+                {"refresh": ["Bu token mövcud deyil!"]},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
+        token.blacklist()
+
+        return Response(status=status.HTTP_205_RESET_CONTENT)
 
 
 class ProfileView(APIView):
@@ -120,19 +133,15 @@ class ProfileView(APIView):
     )
     def put(self, request):
         user = request.user
+
         serializer = UserSerializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        return Response(
-            {"message": "Invalid Data", "errors": serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class SendOTPView(APIView):
+class OTPSendView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     @swagger_auto_schema(
@@ -148,18 +157,20 @@ class SendOTPView(APIView):
         },
     )
     def post(self, request):
-        try:
-            email = request.data["email"]
-        except Exception:
+        email = request.data.get("email")
+
+        if not email:
             return Response(
-                {"message": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+                {"email": ["Bu xana boş ola bilməz!"]},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         user = User.objects.filter(email=email).first()
 
         if not user:
             return Response(
-                {"message": "Email does not exist."}, status=status.HTTP_400_BAD_REQUEST
+                {"email": ["Bu email ilə istifadəçi tapılmadı!"]},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         otp = user.generate_otp()
@@ -171,7 +182,10 @@ class SendOTPView(APIView):
             [email],
         )
 
-        return Response({"message": "OTP sent."}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "OTP kodu email vasitəsi ilə göndərildi."},
+            status=status.HTTP_200_OK,
+        )
 
 
 class OTPCheckView(APIView):
