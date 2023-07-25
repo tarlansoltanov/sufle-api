@@ -20,19 +20,14 @@ from server.apps.core.logic.schemas import (
 
 from .models import User
 from .logic.serializers import UserSerializer, LoginSerializer
+from .logic.schemas import AUTH_TOKENS
 
 
 class LoginView(APIView):
     @swagger_auto_schema(
         request_body=LoginSerializer,
         responses={
-            200: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "refresh": openapi.Schema(type=openapi.TYPE_STRING),
-                    "access": openapi.Schema(type=openapi.TYPE_STRING),
-                },
-            ),
+            200: AUTH_TOKENS,
             400: BAD_REQUEST,
             401: UNAUTHORIZED,
         },
@@ -191,16 +186,7 @@ class CheckOTPView(APIView):
             },
         ),
         responses={
-            200: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="OTP is valid."
-                    ),
-                    "access": openapi.Schema(type=openapi.TYPE_STRING),
-                    "refresh": openapi.Schema(type=openapi.TYPE_STRING),
-                },
-            ),
+            200: AUTH_TOKENS,
             400: BAD_REQUEST,
         },
     )
