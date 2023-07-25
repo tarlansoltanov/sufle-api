@@ -150,3 +150,67 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
+
+
+class OTPCheckSerializer(serializers.Serializer):
+    """Check OTP serializer."""
+
+    email = serializers.EmailField(
+        required=True, error_messages={"required": "Bu xana boş ola bilməz!"}
+    )
+    otp = serializers.CharField(
+        required=True, error_messages={"required": "Bu xana boş ola bilməz!"}
+    )
+
+    class Meta:
+        """Meta definition for OTPCheckSerializer."""
+
+        fields = ["email", "otp"]
+
+    def validate_email(self, value):
+        email = value.lower()
+
+        if not User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                "Bu email mövcud deyil! Zəhmət olmasa düzgün email daxil edin!"
+            )
+
+        return email
+
+    def validate(self, data):
+        email = data.get("email")
+        otp = data.get("otp")
+
+        user = User.objects.filter(email=email).first()
+
+        if user.otp != otp:
+            raise serializers.ValidationError("Yanlış OTP daxil etdiniz!")
+
+        return data
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    """Serializer definition for Password Reset."""
+
+    password = serializers.CharField(
+        required=True, error_messages={"required": "Bu xana boş ola bilməz!"}
+    )
+    confirm_password = serializers.CharField(
+        required=True, error_messages={"required": "Bu xana boş ola bilməz!"}
+    )
+
+    class Meta:
+        """Meta definition for PasswordResetSerializer."""
+
+        fields = ["password", "confirm_password"]
+
+    def validate(self, data):
+        password = data.get("password")
+        confirm_password = data.get("confirm_password")
+
+        if password != confirm_password:
+            raise serializers.ValidationError(
+                {"confirm_password": "Bu xana şifrə xanası ilə eyni olmalıdır!"}
+            )
+
+        return data

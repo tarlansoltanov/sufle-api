@@ -174,60 +174,31 @@ class SendOTPView(APIView):
         return Response({"message": "OTP sent."}, status=status.HTTP_200_OK)
 
 
-class CheckOTPView(APIView):
+class OTPCheckView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     @swagger_auto_schema(
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "email": openapi.Schema(type=openapi.TYPE_STRING),
-                "otp": openapi.Schema(type=openapi.TYPE_STRING),
-            },
-        ),
+        request_body=OTPCheckSerializer,
         responses={
             200: AUTH_TOKENS,
             400: BAD_REQUEST,
         },
     )
     def post(self, request):
-        try:
-            email = request.data["email"]
-            otp = request.data["otp"]
-        except Exception:
-            return Response(
-                {"message": "Email and OTP is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serializer = OTPCheckSerializer(data=request.data)
 
-        user = User.objects.filter(email=email).first()
+        serializer.is_valid(raise_exception=True)
 
-        if not user:
-            return Response(
-                {"message": "Email does not exist."}, status=status.HTTP_400_BAD_REQUEST
-            )
+        user = User.objects.filter(email=serializer.validated_data["email"]).first()
 
-        if not user.verify_otp(otp):
-            return Response(
-                {"message": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        return Response(
-            {"message": "OTP is valid.", **user.get_tokens()}, status=status.HTTP_200_OK
-        )
+        return Response({**user.get_tokens()}, status=status.HTTP_200_OK)
 
 
-class ResetPasswordView(APIView):
+class PasswordResetView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "password": openapi.Schema(type=openapi.TYPE_STRING),
-                "confirm_password": openapi.Schema(type=openapi.TYPE_STRING),
-            },
-        ),
+        request_body=PasswordResetSerializer,
         responses={
             200: NO_CONTENT,
             400: BAD_REQUEST,
@@ -237,22 +208,10 @@ class ResetPasswordView(APIView):
     def post(self, request):
         user = request.user
 
-        try:
-            password = request.data["password"]
-            confirm_password = request.data["confirm_password"]
-        except Exception:
-            return Response(
-                {"message": "Password and Confirm Password is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serializer = PasswordResetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if password != confirm_password:
-            return Response(
-                {"message": "Password and Confirm Password does not match"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        user.set_password(password)
+        user.set_password(serializer.validated_data["password"])
         user.save()
 
         return Response(status=status.HTTP_200_OK)
