@@ -11,6 +11,12 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 from server.apps.core.logic.permissions import IsStaff, IsAdmin
+from server.apps.core.logic.schemas import (
+    SUCCESS,
+    BAD_REQUEST,
+    UNAUTHORIZED,
+    NO_CONTENT,
+)
 
 from .models import User
 from .logic.serializers import UserSerializer, LoginSerializer
@@ -27,22 +33,8 @@ class LoginView(APIView):
                     "access": openapi.Schema(type=openapi.TYPE_STRING),
                 },
             ),
-            400: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Credentials missing"
-                    ),
-                },
-            ),
-            401: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Invalid Credentials"
-                    ),
-                },
-            ),
+            400: BAD_REQUEST,
+            401: UNAUTHORIZED,
         },
     )
     def post(self, request):
@@ -71,26 +63,7 @@ class LoginView(APIView):
 class RegistrationView(APIView):
     @swagger_auto_schema(
         request_body=UserSerializer,
-        responses={
-            201: UserSerializer,
-            400: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Invalid Credentials"
-                    ),
-                    "errors": openapi.Schema(
-                        type=openapi.TYPE_OBJECT,
-                        properties={
-                            "field": openapi.Schema(
-                                type=openapi.TYPE_ARRAY,
-                                items=openapi.Schema(type=openapi.TYPE_STRING),
-                            ),
-                        },
-                    ),
-                },
-            ),
-        },
+        responses={201: UserSerializer, 400: BAD_REQUEST},
     )
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -110,31 +83,9 @@ class LogoutView(APIView):
             },
         ),
         responses={
-            205: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Logout successful"
-                    ),
-                },
-            ),
-            400: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Invalid token"
-                    ),
-                },
-            ),
-            401: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING,
-                        default="Authentication credentials were not provided.",
-                    ),
-                },
-            ),
+            205: NO_CONTENT,
+            400: BAD_REQUEST,
+            401: UNAUTHORIZED,
         },
     )
     def post(self, request):
@@ -157,15 +108,7 @@ class ProfileView(APIView):
     @swagger_auto_schema(
         responses={
             200: UserSerializer,
-            401: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "detail": openapi.Schema(
-                        type=openapi.TYPE_STRING,
-                        default="Authentication credentials were not provided or is incorrect.",
-                    ),
-                },
-            ),
+            401: UNAUTHORIZED,
         },
     )
     def get(self, request):
@@ -176,32 +119,8 @@ class ProfileView(APIView):
         request_body=UserSerializer,
         responses={
             200: UserSerializer,
-            401: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING,
-                        default="Authentication credentials were not provided or is incorrect.",
-                    ),
-                },
-            ),
-            400: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Invalid Data"
-                    ),
-                    "errors": openapi.Schema(
-                        type=openapi.TYPE_OBJECT,
-                        properties={
-                            "field": openapi.Schema(
-                                type=openapi.TYPE_ARRAY,
-                                items=openapi.Schema(type=openapi.TYPE_STRING),
-                            ),
-                        },
-                    ),
-                },
-            ),
+            400: BAD_REQUEST,
+            401: UNAUTHORIZED,
         },
     )
     def put(self, request):
@@ -229,23 +148,8 @@ class SendOTPView(APIView):
             },
         ),
         responses={
-            200: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="OTP sent."
-                    ),
-                },
-            ),
-            400: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING,
-                        default="Email is required | Email does not exist.",
-                    ),
-                },
-            ),
+            200: SUCCESS,
+            400: BAD_REQUEST,
         },
     )
     def post(self, request):
@@ -297,15 +201,7 @@ class CheckOTPView(APIView):
                     "refresh": openapi.Schema(type=openapi.TYPE_STRING),
                 },
             ),
-            400: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING,
-                        default="Email and OTP is required | Email does not exist | Invalid OTP",
-                    ),
-                },
-            ),
+            400: BAD_REQUEST,
         },
     )
     def post(self, request):
@@ -347,31 +243,9 @@ class ResetPasswordView(APIView):
             },
         ),
         responses={
-            200: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Password updated."
-                    ),
-                },
-            ),
-            400: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING,
-                        default="Password and Confirm Password is required | Password and Confirm Password does not match",
-                    ),
-                },
-            ),
-            401: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "detail": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Invalid Token"
-                    ),
-                },
-            ),
+            200: NO_CONTENT,
+            400: BAD_REQUEST,
+            401: UNAUTHORIZED,
         },
     )
     def post(self, request):
@@ -395,7 +269,7 @@ class ResetPasswordView(APIView):
         user.set_password(password)
         user.save()
 
-        return Response({"message": "Password updated."}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
 
 
 class AccountDeleteView(APIView):
@@ -403,22 +277,8 @@ class AccountDeleteView(APIView):
 
     @swagger_auto_schema(
         responses={
-            200: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Account deleted."
-                    ),
-                },
-            ),
-            401: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Invalid Credentials"
-                    ),
-                },
-            ),
+            204: NO_CONTENT,
+            401: UNAUTHORIZED,
         },
     )
     def delete(self, request):
@@ -426,9 +286,7 @@ class AccountDeleteView(APIView):
 
         user.delete()
 
-        return Response(
-            {"message": "Account deleted."}, status=status.HTTP_204_NO_CONTENT
-        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CheckTokenView(APIView):
@@ -436,26 +294,12 @@ class CheckTokenView(APIView):
 
     @swagger_auto_schema(
         responses={
-            200: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Token is valid."
-                    ),
-                },
-            ),
-            401: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "message": openapi.Schema(
-                        type=openapi.TYPE_STRING, default="Invalid Token"
-                    ),
-                },
-            ),
+            200: NO_CONTENT,
+            401: UNAUTHORIZED,
         },
     )
     def get(self, request):
-        return Response({"message": "Token is valid."}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
 
 
 class CustomerListView(APIView):
@@ -463,18 +307,7 @@ class CustomerListView(APIView):
     serializer_class = UserSerializer
 
     @swagger_auto_schema(
-        responses={
-            200: UserSerializer(many=True),
-            401: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "detail": openapi.Schema(
-                        type=openapi.TYPE_STRING,
-                        default="Authentication credentials were not provided.",
-                    ),
-                },
-            ),
-        },
+        responses={200: UserSerializer(many=True), 401: UNAUTHORIZED},
     )
     def get(self, request):
         customers = User.objects.filter(is_staff=False)
