@@ -261,16 +261,15 @@ class CheckTokenView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class CustomerListView(APIView):
-    permission_classes = (IsStaff,)
+class CustomerViewSet(viewsets.ModelViewSet):
+    model = User
+    queryset = User.objects.filter(is_staff=False, is_superuser=False)
+
     serializer_class = UserSerializer
 
-    @swagger_auto_schema(
-        responses={200: UserSerializer(many=True), 401: UNAUTHORIZED},
-    )
-    def get(self, request):
-        customers = User.objects.filter(is_staff=False)
-        return Response(self.serializer_class(customers, many=True).data)
+    permission_classes = (IsStaff,)
+
+    http_method_names = ["head", "options", "get", "delete"]
 
 
 class StaffViewSet(viewsets.ModelViewSet):

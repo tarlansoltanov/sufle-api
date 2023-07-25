@@ -34,7 +34,7 @@ from server.apps.contact.views import ContactViewSet
 from server.apps.gallery.views import GalleryViewSet
 from server.apps.vacancy.views import VacancyViewSet
 from server.apps.product.views import WeightViewSet
-from server.apps.user.views import StaffViewSet
+from server.apps.user.views import StaffViewSet, CustomerViewSet
 
 router = routers.DefaultRouter()
 router.register(r"category", CategoryViewSet, basename="category")
@@ -47,6 +47,7 @@ router.register(r"vacancy", VacancyViewSet, basename="vacancy")
 router.register(r"weight", WeightViewSet, basename="weight")
 router.register(r"advert", AdvertViewSet, basename="advert")
 router.register(r"staff", StaffViewSet, basename="staff")
+router.register(r"customer", CustomerViewSet, basename="customer")
 
 urlpatterns += [
     path("api/", include(router.urls)),
