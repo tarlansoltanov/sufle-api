@@ -301,7 +301,7 @@ class CustomerListView(APIView):
 
 
 class StaffViewSet(viewsets.ModelViewSet):
-    """ViewSet definition for Shop."""
+    """ViewSet definition for Staff."""
 
     model = User
     queryset = User.objects.filter(is_staff=True, is_superuser=False)
@@ -310,29 +310,42 @@ class StaffViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAdmin]
 
+    @swagger_auto_schema(
+        request_body=UserSerializer,
+        responses={
+            201: UserSerializer,
+            400: BAD_REQUEST,
+            401: UNAUTHORIZED,
+        },
+    )
     def create(self, request):
+        """Create View for Staff."""
+
         serializer = self.serializer_class(
             data=request.data, context={"is_staff": True}
         )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        return Response(
-            {"message": "Invalid Data", "errors": serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @swagger_auto_schema(
+        request_body=UserSerializer,
+        responses={
+            201: UserSerializer,
+            400: BAD_REQUEST,
+            401: UNAUTHORIZED,
+        },
+    )
     def update(self, request, pk=None, *args, **kwargs):
+        """Update View for Staff."""
+
         instance = self.get_object()
+
         serializer = self.serializer_class(
             instance, data=request.data, context={"is_staff": True}, partial=True
         )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        return Response(
-            {"message": "Invalid Data", "errors": serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
