@@ -123,3 +123,43 @@ ifeq ("$(ENV)", "dev")
 else
 	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml exec web python manage.py shell
 endif
+
+backup:
+	@echo "POSTGRES: Create a Database Backup"
+ifeq ("$(ENV)", "dev")
+	docker compose exec backup backup
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml exec backup backup
+endif
+
+show backups:
+	@echo "POSTGRES: Show Database Backups"
+ifeq ("$(ENV)", "dev")
+	docker compose exec backup backups
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml exec backup backups
+endif
+
+restore $(filename):
+	@echo "POSTGRES: Restore Database with a Backup"
+ifeq ("$(ENV)", "dev")
+	docker compose exec backup restore $(filename)
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml exec backup restore $(filename)
+endif
+
+clean:
+	@echo "POSTGRES: Clean Database Backups"
+ifeq ("$(ENV)", "dev")
+	docker compose exec backup clean
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml exec backup clean
+endif
+
+cycle:
+	@echo "POSTGRES: Start the backup cycle"
+ifeq ("$(ENV)", "dev")
+	docker compose exec backup cycle
+else
+	docker compose -f $(compose-main) -f docker/docker-compose.$(ENV).yml exec backup cycle
+endif

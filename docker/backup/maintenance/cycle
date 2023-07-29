@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+
+### Start the database backup cycle.
+###
+### Usage:
+###     $ make cycle
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+working_dir="$(dirname ${0})"
+source "${working_dir}/_sourced/constants.sh"
+
+echo "Backup Cycle started.";
+
+while true; do
+    backup;
+    clean;
+    sleep $((3600 * BACKUP_INTERVAL));
+done;
+

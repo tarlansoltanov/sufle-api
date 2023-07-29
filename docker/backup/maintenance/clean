@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+
+### Clean old database backup files.
+###
+### Usage:
+###     $ make clean
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+working_dir="$(dirname ${0})"
+source "${working_dir}/_sourced/constants.sh"
+source "${working_dir}/_sourced/messages.sh"
+
+message_welcome "Cleaning up old backup data..."
+message_info "CLEANUP INTERVAL: ${BACKUP_MAX_AGE} days"
+
+find "${BACKUP_DIR_PATH}" -type f -mmin +$((60 * BACKUP_MAX_AGE - 1)) -delete;
+
+message_success "Old backup files cleaned"
