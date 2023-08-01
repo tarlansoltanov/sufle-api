@@ -24,7 +24,7 @@ class Product(BaseModel):
 
     def __str__(self):
         """Unicode representation of Product."""
-        
+
         return self.name
 
 
@@ -38,6 +38,8 @@ class ProductImage(BaseModel):
 
     class Meta(BaseModel.Meta):
         """Meta definition for ProductImage."""
+
+        ordering = ["created_at"]
 
         verbose_name = "ProductImage"
         verbose_name_plural = "ProductImages"
@@ -56,6 +58,8 @@ class ProductWeight(BaseModel):
 
     class Meta(BaseModel.Meta):
         """Meta definition for ProductWeight."""
+
+        ordering = ["person_count"]
 
         verbose_name = "ProductWeight"
         verbose_name_plural = "ProductWeights"

@@ -20,10 +20,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     model = Product
     queryset = (
-        Product.objects.select_related("category")
-        .prefetch_related("images")
-        .all()
-        .order_by("-modified_at")
+        Product.objects.select_related("category").prefetch_related("images").all()
     )
 
     permission_classes = [IsAdminOrReadOnly]
@@ -61,5 +58,5 @@ class WeightViewSet(viewsets.ReadOnlyModelViewSet):
 
     model = ProductWeight
     serializer_class = WeightReadSerializer
-    queryset = ProductWeight.objects.all().order_by("person_count")
+    queryset = ProductWeight.objects.all()
     permission_classes = [permissions.AllowAny]

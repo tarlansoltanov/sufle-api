@@ -34,6 +34,8 @@ class Requirement(BaseModel):
     class Meta(BaseModel.Meta):
         """Meta definition for Requirement."""
 
+        ordering = ["created_at"]
+
         verbose_name = "Requirement"
         verbose_name_plural = "Requirements"
 

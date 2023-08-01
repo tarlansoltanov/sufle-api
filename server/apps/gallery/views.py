@@ -12,7 +12,7 @@ class GalleryViewSet(viewsets.ModelViewSet):
     """ViewSet definition for Gallery."""
 
     model = Gallery
-    queryset = Gallery.objects.all().order_by("-modified_at")
+    queryset = Gallery.objects.all()
 
     serializer_class = GallerySerializer
 
