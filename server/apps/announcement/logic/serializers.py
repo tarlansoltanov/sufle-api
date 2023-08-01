@@ -1,39 +1,69 @@
 from rest_framework import serializers
 
+from server.apps.category.logic.serializers import (
+    CategoryReadSerializer as CategorySerializer,
+)
+
 from ..models import Banner, Advert
 
 
-class BannerReadSerializer(serializers.ModelSerializer):
+class BannerSerializer(serializers.ModelSerializer):
     """Serializer definition for Banner."""
-
-    photo = serializers.SerializerMethodField()
 
     class Meta:
         """Meta definition for BannerSerializer."""
 
         model = Banner
-        fields = "__all__"
+        fields = [
+            "id",
+            "photo",
+            "deadline",
+            "modified_at",
+            "created_at",
+        ]
+        read_only_fields = [
+            "id",
+            "modified_at",
+            "created_at",
+        ]
 
-    def get_photo(self, obj):
-        """Return photo url."""
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
         request = self.context.get("request")
-        photo_url = obj.photo.url
-        return request.build_absolute_uri(photo_url)
+
+        data["photo"] = request.build_absolute_uri(instance.photo.url)
+
+        return data
 
 
 class AdvertReadSerializer(serializers.ModelSerializer):
     """Serializer definition for Advert."""
 
-    photo = serializers.SerializerMethodField()
-
     class Meta:
         """Meta definition for AdvertSerializer."""
 
         model = Advert
-        fields = "__all__"
+        fields = [
+            "id",
+            "title",
+            "photo",
+            "category",
+            "modified_at",
+            "created_at",
+        ]
+        read_only_fields = [
+            "id",
+            "modified_at",
+            "created_at",
+        ]
 
-    def get_photo(self, obj):
-        """Return photo url."""
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
         request = self.context.get("request")
-        photo_url = obj.photo.url
-        return request.build_absolute_uri(photo_url)
+
+        data["photo"] = request.build_absolute_uri(instance.photo.url)
+        data["category"] = CategorySerializer(
+            instance.category, context=self.context
+        ).data
+
+        return data

@@ -1,22 +1,30 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
+
+from server.apps.core.logic.permissions import IsStaffOrReadOnly
 
 from .models import Banner, Advert
-from .logic.serializers import BannerReadSerializer, AdvertReadSerializer
+from .logic.serializers import BannerSerializer, AdvertReadSerializer
 
 
-class BannerViewSet(viewsets.ReadOnlyModelViewSet):
+class BannerViewSet(viewsets.ModelViewSet):
     """ViewSet definition for Banner."""
 
     model = Banner
-    serializer_class = BannerReadSerializer
-    queryset = Banner.objects.all().order_by("-created_at")
-    permission_classes = [permissions.AllowAny]
+    queryset = Banner.objects.all()
+
+    serializer_class = BannerSerializer
+
+    permission_classes = [IsStaffOrReadOnly]
 
 
-class AdvertViewSet(viewsets.ReadOnlyModelViewSet):
+class AdvertViewSet(viewsets.ModelViewSet):
     """ViewSet definition for Advert."""
 
     model = Advert
+    queryset = Advert.objects.all()
+
+    http_method_names = ["head", "options", "get", "put", "patch"]
+
     serializer_class = AdvertReadSerializer
-    queryset = Advert.objects.all().order_by("-modified_at")
-    permission_classes = [permissions.AllowAny]
+
+    permission_classes = [IsStaffOrReadOnly]
