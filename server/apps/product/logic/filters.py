@@ -86,7 +86,13 @@ class CategoryFilter(filters.BaseFilterBackend):
                 except ValueError:
                     category_ids.remove(category_id)
                     continue
-                category = Category.objects.get(id=category_id)
+
+                category = Category.objects.filter(id=category_id).first()
+
+                if category is None:
+                    category_ids.remove(category_id)
+                    continue
+
                 if category.main_category is None:
                     category_ids += list(
                         category.sub_categories.values_list("id", flat=True)
