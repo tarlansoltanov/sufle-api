@@ -1,16 +1,16 @@
 from rest_framework.response import Response
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, filters
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from server.apps.core.logic.pagination import CustomPagination
-from server.apps.core.logic.permissions import IsAdminOrReadOnly
+from server.apps.core.logic.permissions import IsStaffOrReadOnly
 
 from .models import Product, ProductWeight
 from .logic.serializers import (
     ProductReadSerializer,
     ProductWriteSerializer,
-    WeightReadSerializer,
+    WeightSerializer,
 )
 from .logic.filters import PriceAndDiscountRangeFilter, CategoryFilter
 
@@ -23,7 +23,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         Product.objects.select_related("category").prefetch_related("images").all()
     )
 
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsStaffOrReadOnly]
 
     pagination_class = CustomPagination
 
@@ -53,10 +53,16 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class WeightViewSet(viewsets.ReadOnlyModelViewSet):
+class WeightViewSet(viewsets.ModelViewSet):
     """ViewSet definition for ProductWeight."""
 
     model = ProductWeight
-    serializer_class = WeightReadSerializer
     queryset = ProductWeight.objects.all()
-    permission_classes = [permissions.AllowAny]
+
+    serializer_class = WeightSerializer
+
+    permission_classes = [IsStaffOrReadOnly]
+
+    filter_backends = [filters.OrderingFilter]
+
+    ordering_fields = ["modified_at"]

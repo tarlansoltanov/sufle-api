@@ -56,14 +56,29 @@ class ProductReadSerializer(serializers.ModelSerializer):
         return CategoryReadSerializer(obj.category, main=True).data
 
 
-class WeightReadSerializer(serializers.ModelSerializer):
-    """Serializer for Reading ProductWeight."""
+class WeightSerializer(serializers.ModelSerializer):
+    """Serializer for ProductWeight."""
 
     class Meta:
-        """Meta definition for WeightReadSerializer."""
+        """Meta definition for WeightSerializer."""
 
         model = ProductWeight
-        fields = ("id", "person_count", "weight")
+        fields = ["id", "person_count", "weight", "modified_at", "created_at"]
+        read_only_fields = ["id", "modified_at", "created_at"]
+
+    def validate(self, attrs):
+        person_count = attrs.get("person_count")
+        weight = attrs.get("weight")
+
+        if person_count and person_count < 1:
+            raise serializers.ValidationError(
+                {"person_count": "Adam sayısı 1-dən böyük olmalıdır."}
+            )
+
+        if weight and weight < 0:
+            raise serializers.ValidationError({"weight": "Çəki 0-dan böyük olmalıdır."})
+
+        return super().validate(attrs)
 
 
 class ProductWriteSerializer(serializers.ModelSerializer):
